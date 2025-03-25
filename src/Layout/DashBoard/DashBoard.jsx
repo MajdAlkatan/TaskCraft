@@ -5,12 +5,13 @@ import Header from './Section/Header/Header';
 import { FaList, FaPlus } from 'react-icons/fa';
 import Statistics from "../../Components/Statistics/Statistics";
 import "./DashBoard.css";
+import WelcomeBack from './Section/WelcomeBack/WelcomeBack';
 
 function DashBoard() {
     return (
         <div className='dashboard'>
             <Header />
-
+            <WelcomeBack/>
             <div className='main-content'>
                 <Sidebar />
                 <div className="main-workspace">
