@@ -22,17 +22,28 @@ function PieCenterLabel({ children }) {
   );
 }
 
-export default function Statistics({ title }) {
-  const data = [
-    { value: Math.floor(Math.random() * 10) + 5 },
-    { value: Math.floor(Math.random() * 10) + 5 },
-  ];
-
+export default function Statistics({ title, values, colors }) {
+  // Prepare the data based on values and colors props
+  const data = values.map((value, index) => ({
+    value,
+    color: colors[index] || '#808080', // Default to gray if no color is provided for a slice
+  }));
+  const total = data.reduce((acc, curr) => acc + curr.value, 0);
+  const percentage = total > 0 ? ((data[0].value / total) * 100).toFixed(1) : 0;
   return (
     <div className="stat-item">
-      <PieChart series={[{ data, innerRadius: 70 }]} width={300} height={300}>
-        <PieCenterLabel>{title}</PieCenterLabel>
+      <PieChart
+        series={[{
+          data,
+          innerRadius:75,
+        }]}
+        width={300}
+        height={300}
+      >
+        <PieCenterLabel>{percentage}</PieCenterLabel>
       </PieChart>
+      <div className='pie-title'>{title}</div>
+
     </div>
   );
 }

@@ -6,4 +6,9 @@
   justify-content: center;
   height: 180px;
   width: 62px;
-margin-left: 12%;}
+  margin-left: 12%;
+}
+.pie-title {
+  position: relative;
+  right: 30%;
+}
