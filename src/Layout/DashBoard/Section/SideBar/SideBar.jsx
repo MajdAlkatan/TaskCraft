@@ -1,10 +1,17 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Sidebar.css";
-import { FaTachometerAlt, FaTasks, FaList, FaCog, FaQuestionCircle, FaSignOutAlt } from "react-icons/fa";
+import { FaTachometerAlt, FaList, FaCog, FaQuestionCircle, FaSignOutAlt } from "react-icons/fa";
 
 function Sidebar() {
-  const navigate = useNavigate(); // Initialize navigation function
+  const navigate = useNavigate();
+  const location = useLocation(); // Get current route
+  const [activeMenu, setActiveMenu] = useState(location.pathname); // Track active menu
+
+  const handleNavigation = (path) => {
+    setActiveMenu(path); // Update active state
+    navigate(path); // Navigate to the selected path
+  };
 
   return (
     <aside className="sidebar">
@@ -15,14 +22,34 @@ function Sidebar() {
       </div>
 
       <nav className="menu">
-        <a href="#" onClick={() => navigate("/")}><FaTachometerAlt className="icon" /> Dashboard</a>
-        <a href="#" onClick={() => navigate("/mytask")}><FaList className="icon" /> My Task</a>
-        <a href="#"><FaCog className="icon" /> Settings</a>
-        <a href="#"><FaQuestionCircle className="icon" /> Help</a>
+        <a 
+          onClick={() => handleNavigation("/")} 
+          className={activeMenu === "/" ? "active" : ""}
+        >
+          <FaTachometerAlt className="sidebar-icon" /> Dashboard
+        </a>
+        <a 
+          onClick={() => handleNavigation("/mytask")} 
+          className={activeMenu === "/mytask" ? "active" : ""}
+        >
+          <FaList className="sidebar-icon" /> My Task
+        </a>
+        <a 
+          onClick={() => handleNavigation("/settings")} 
+          className={activeMenu === "/settings" ? "active" : ""}
+        >
+          <FaCog className="sidebar-icon" /> Settings
+        </a>
+        <a 
+          onClick={() => handleNavigation("/help")} 
+          className={activeMenu === "/help" ? "active" : ""}
+        >
+          <FaQuestionCircle className="sidebar-icon" /> Help
+        </a>
       </nav>
 
       <div className="logout">
-        <a href="#"><FaSignOutAlt className="icon" /> Logout</a>
+        <a href="#"><FaSignOutAlt className="sidebar-icon" /> Logout</a>
       </div>
     </aside>
   );

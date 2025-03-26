@@ -6,6 +6,7 @@
   height: 100vh;
   border-radius: 12px;
   position: relative; /* Make sure the sidebar can position the profile image */
+  min-width: 250px;
 }
 
 .profile {
@@ -20,7 +21,7 @@
   border-radius: 50%;
   border: 3px solid white;
   position: absolute; /* Position the image absolutely */
-  bottom: 5rem ; /* Move the image up to make it half out */
+  bottom: 5rem; /* Move the image up to make it half out */
   left: calc(50% - 30px); /* Center the image horizontally */
 }
 
@@ -38,7 +39,6 @@
   display: flex;
   flex-direction: column;
 }
-
 .menu a {
   display: flex;
   align-items: center;
@@ -48,13 +48,16 @@
   padding: 12px 15px;
   border-radius: 6px;
   transition: background 0.3s;
+  cursor: pointer;
 }
 
-.menu a:hover, .menu a.active {
+/* Active menu item */
+.menu a.active {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.icon {
+
+.sidebar-icon {
   font-size: 16px;
 }
 

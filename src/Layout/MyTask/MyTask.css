@@ -1,0 +1,87 @@
+.my-task-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Left Section: Task List */
+.task-list {
+  width: 90%;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.task-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-bottom: 10px;
+}
+
+.task-card.active {
+  border: 2px solid #007bff;
+  background: #e6f0ff;
+}
+
+.task-card:hover {
+  transform: scale(1.02);
+}
+
+.task-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+}
+
+.task-info h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Right Section: Task Details */
+.task-details {
+  width: 100%;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.task-detail-image {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.task-full-details {
+  margin-top: 10px;
+  text-align: start;
+}
+.main-title-task-details {
+  display: flex;
+}
+.main-grid-task-detailes {
+  display: grid;
+  width: 100%;
+  justify-content: start;
+  text-align: start;
+}
+.detailes-task-full {
+  line-height: 2;
+}
+
+.task-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  align-items: center;
+  justify-content: end;
+}

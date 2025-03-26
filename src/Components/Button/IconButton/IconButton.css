@@ -1,0 +1,21 @@
+.icon-button {
+    border: none; /* Remove border */
+    background: #ff6b6b; /* Background color */
+    border-radius: 15%; /* Make it circular */
+    width: 34px; /* Set button width */
+    height: 34px; /* Set button height */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center icon horizontally */
+    align-items: center; /* Center icon vertically */
+    cursor: pointer; /* Show pointer on hover */
+    transition: background 0.3s; /* Smooth transition for hover effect */
+}
+
+.icon-button:hover {
+    background: #ff4d4d; /* Darker shade on hover */
+}
+
+.icon {
+    font-size: 18px; /* Adjust icon size */
+    color: #ffffff; /* Icon color */
+}
