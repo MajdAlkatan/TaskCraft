@@ -6,7 +6,7 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="profile">
-        <img src="https://via.placeholder.com/50" alt="Profile" className="profile-img" />
+        <img src="https://via.placeholder.com/0" alt="Profile" className="profile-img" />
         <h3>Sundar Gurung</h3>
         <p>sundargurung360@gmail.com</p>
       </div>
