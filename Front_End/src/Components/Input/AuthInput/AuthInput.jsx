@@ -4,7 +4,7 @@ import "./AuthInput.css"; // Import the CSS file
 function AuthInput({ inputtype, placeholder, Icon }) {
   return (
     <div className="auth-input-container">
-      <span className="auth-input-icon">{Icon && <Icon className="icon" />}</span>
+      <span className="auth-input-icon">{Icon && <Icon className="auth-icon" />}</span>
       <input
         type={inputtype}
         placeholder={placeholder}

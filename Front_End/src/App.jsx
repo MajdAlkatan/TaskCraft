@@ -7,10 +7,16 @@ import Setting from './Layout/Setting/Setting';
 import Profile from './Layout/Profile/Profile';
 import ChangePassword from './Layout/ChangePassword/ChangePassword';
 import TestNotification from './Layout/Profile/TestNotification';
+import Login from "./Layout/Auth/Login/Login"
+import Register from "./Layout/Auth/Register/Register"
 import './App.css';
 
 function App() {
     return (
+    //    <>
+    //      <Login/>
+    //     <Register/> 
+    //     </>
         <Router>
             <Header />
             <div className="main-content">
