@@ -22,39 +22,47 @@ function ChangePassword() {
   };
 
   return (
-    <div className="change-password-section">
-      <h3>Change Password</h3>
-      <form onSubmit={handleChangePassword}>
-        <DefulteInput
-          label="Current Password"
-          id="current-password"
-          type="password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          required
-        />
-        <DefulteInput
-          label="New Password"
-          id="new-password"
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-        />
-        <DefulteInput
-          label="Confirm New Password"
-          id="confirm-password"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <div className="btn-changepassword">
-          <FormButton type="submit" label='Change password' />
-          <FormButton type="" label='cancle' />
+    <section className='changepassowrd'>
+      <div className="profile-changepassword">
+        <img src="https://via.placeholder.com/40" alt="Profile" className='changepassword-img' />
+        <div className="pass-title">
+          <h3>Sundar Gurung</h3>
+          <p>sundargurung360@gmail.com</p>
         </div>
-      </form>
-    </div>
+      </div>
+      <div className="change-password-section">
+        <form onSubmit={handleChangePassword}>
+          <DefulteInput
+            label="Current Password"
+            id="current-password"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            required
+          />
+          <DefulteInput
+            label="New Password"
+            id="new-password"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
+          <DefulteInput
+            label="Confirm New Password"
+            id="confirm-password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          <div className="btn-changepassword">
+            <FormButton type="submit" label='Change password' />
+            <FormButton type="" label='cancle' />
+          </div>
+        </form>
+      </div>
+    </section>
   );
 }
 
