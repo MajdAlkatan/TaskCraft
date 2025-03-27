@@ -13,7 +13,7 @@
 2. create ur own venv: inside the Back_End folder [ ```< Python 3.13 path > -m venv . ``` ]
 3. instal the requirements: ``` pip install -r requirements.txt ``` (recently added mysqlclient package to requirements.txt)
 4. create database (we did the mysql configuration in settings.py and .env file) #edited
-5. copy .env.example to .env file on ur device using terminal
+5. copy .env.example to .env file on ur device using terminal: ``` cp .env.example .env ``` (Note: use powershell instead of cmd on windows and 'cp' will work)
 6. generate Secret Key using [Djecrety](https://djecrety.ir/) website
 7. make migrations: ``` python manage.py makemigrations ``` then ``` python manage.py migrate ```
 8. finally check if the project working: ``` python manage.py runserver ```
