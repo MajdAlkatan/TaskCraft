@@ -7,6 +7,7 @@ db.sqlite3
 media/
 env/
 ###These are the venv files###
+venv/
 include/
 lib/
 Scripts/
