@@ -140,27 +140,30 @@
   border-radius: 12px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
+.completed-task div {
+  max-width: 300px;
+  max-height: 100px;
+}
 
-.completed-task h3 {
+.completed-task h2 {
   color: #ff4757;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.completed-task .task {
-  background: #f1f2f6;
-  padding: 10px;
+.completed-task p {
   border-radius: 8px;
+  font-size: 10px;
+  margin: 0;
+}
+.completed-task .card-meta{
   display: flex;
-  align-items: center;
-  gap: 10px;
+  margin: 0;
 }
 
-.completed-task .task img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.completed-task  span {
+font-size: 10px;
 }
 
 /* Responsive Design */

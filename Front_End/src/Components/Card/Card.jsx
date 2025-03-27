@@ -3,34 +3,38 @@ import "./Card.css";
 import { BsThreeDots } from "react-icons/bs"; // Settings icon
 
 function Card({ title, description, priority, status, date, image, statusColor }) {
+  const normalizedStatus = status.toLowerCase().trim(); // Normalize status for comparison
+
   const getStatusStyle = () => {
-    switch (status.toLowerCase()) {
-      case 'not started':
-        return {
-          color: 'red',
-          borderColor: 'red',
-        };
-      case 'in progress':
-        return { color: 'blue',
-          borderColor: 'blue',
-         };
+    if (normalizedStatus.startsWith("complet")) {
+      return { color: "green", borderColor: "green" };
+    }
+    switch (normalizedStatus) {
+      case "not started":
+        return { color: "red", borderColor: "red" };
+      case "in progress":
+        return { color: "blue", borderColor: "blue" };
       default:
         return { color: statusColor }; // Fallback to default color
     }
   };
 
   return (
-    <div className="card-container" >
+    <div className="card-container">
       <div className="card-left">
-        <div className="card-circle" style={ getStatusStyle() }></div>
+        <div className="card-circle" style={getStatusStyle()}></div>
         <div className="card-content">
           <h2 className="card-title">{title}</h2>
           <p className="card-subtitle">{description}</p>
           <div className="card-meta">
-            <span className="priority">Priority: {priority}</span>
-            <span className="status" >Status: <h6 style={getStatusStyle()}>{status}</h6></span>
+            {!normalizedStatus.startsWith("complet") && (
+              <span className="priority">Priority: {priority}</span>
+            )}
+            <span className="status">
+              Status: <h6 style={getStatusStyle()}>{status}</h6>
+            </span>
           </div>
-          <p className="card-date"> {date}</p>
+          <p className="card-date">{date}</p>
         </div>
       </div>
 

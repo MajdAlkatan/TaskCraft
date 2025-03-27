@@ -82,6 +82,7 @@ function DashBoard() {
                             date="Completed 2 days ago"
                             image="birthday.jpg"
                             statusColor="green"
+                            
                         />
                     </div>
                 </div>
