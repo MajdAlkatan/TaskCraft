@@ -8,7 +8,6 @@
 }
 
 .profile-section h3 {
-  text-align: center;
   color: #333;
 }
 
@@ -25,7 +24,8 @@
   flex-direction: column;
   align-items: flex-start;
 }
-.profil-title p ,h3 {
+.profil-title p,
+h3 {
   margin: 0;
 }
 .profile-header-section {
@@ -39,7 +39,19 @@
   border-radius: 50%;
   border: 3px solid rgb(0, 0, 0);
 }
-
+.fapen,.fasave {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  max-width: 100px;
+  gap: 10px;
+}
+.fapen p ,.fasave p{
+  margin: 0;
+}
 
 /* ///////////// */
 
