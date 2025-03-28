@@ -9,6 +9,8 @@ import ChangePassword from './Layout/ChangePassword/ChangePassword';
 import TestNotification from './Layout/Profile/TestNotification';
 import Login from "./Layout/Auth/Login/Login"
 import Register from "./Layout/Auth/Register/Register"
+import HelpSection from './Layout/Help/Help';
+
 import './App.css';
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/change-password" element={<ChangePassword />} />
                     <Route path="/test-notification" element={<TestNotification />} />
+                    <Route path="/help" element={<HelpSection />} />
 
                 </Routes>
             </div>

@@ -1,0 +1,87 @@
+.help-section {
+  width: 100%;
+  padding: 20px;
+  background-color: #f9f9f9;
+  max-width: 100%;
+  margin-left: 10px;
+  text-align: start;
+}
+
+.help-nav button {
+  padding: 10px;
+  cursor: pointer;
+  margin-right: 10px;
+  background-color: #007bff; /* Primary button color */
+  color: white; /* Text color */
+  border: none;
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s;
+}
+
+.help-nav button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.faq-section,
+.guide-section,
+.contact-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #ffffff; /* White background for sections */
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.faq-section ul,
+.guide-section ol {
+  list-style-type: none; /* Remove default list styles */
+  padding: 0;
+}
+
+.faq-section li,
+.guide-section li {
+  margin-bottom: 10px; /* Spacing between list items */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  margin-top: 10px;
+  font-weight: bold; /* Bold labels for clarity */
+}
+
+form input,
+form textarea {
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 4px; /* Rounded corners */
+}
+
+form input:focus,
+form textarea:focus {
+  border-color: #007bff; /* Highlight border on focus */
+  outline: none; /* Remove default outline */
+}
+
+form button {
+  margin-top: 10px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fd8080; /* Success button color */
+  color: white; /* Text color */
+  border: none;
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #f85b5b; /* Darker shade on hover */
+}
+
+.message-textarea{
+    display: grid;
+}
