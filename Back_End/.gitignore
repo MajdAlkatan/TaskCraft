@@ -11,6 +11,7 @@ venv/
 include/
 lib/
 Scripts/
+pyvenv.cfg
 ##############################
 .env
 .env.local
