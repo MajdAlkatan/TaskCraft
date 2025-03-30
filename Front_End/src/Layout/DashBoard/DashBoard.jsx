@@ -49,19 +49,19 @@ function DashBoard() {
                         <Statistics
                             title="Chart 1"
                             values={[Math.floor(Math.random() * 10) + 5, Math.floor(Math.random() * 10) + 5]} // Dynamic values
-                            colors={['#cfcfcfbe', '#FF0000']} // Red and Gray
+                            colors={['#FF0000', '#cfcfcfbe']} // Red and Gray
                         />
 
                         <Statistics
                             title="Chart 2"
                             values={[Math.floor(Math.random() * 10) + 5, Math.floor(Math.random() * 10) + 5]}
-                            colors={['#cfcfcfbe', '#0000FF']} // Blue and Gray
+                            colors={['#0000FF', '#cfcfcfbe']} // Blue and Gray
                         />
 
                         <Statistics
                             title="Chart 3"
                             values={[Math.floor(Math.random() * 10) + 5, Math.floor(Math.random() * 10) + 5]}
-                            colors={['#cfcfcfbe', '#008000']} // Green and Gray
+                            colors={['#008000', '#cfcfcfbe']} // Green and Gray
                         />
 
 
@@ -82,7 +82,7 @@ function DashBoard() {
                             date="Completed 2 days ago"
                             image="birthday.jpg"
                             statusColor="green"
-                            
+
                         />
                     </div>
                 </div>
