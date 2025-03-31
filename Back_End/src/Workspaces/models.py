@@ -18,6 +18,9 @@ class Workspace(TimeStampedModel):
         related_name='workspaces'
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Users_Workspaces(models.Model):
     class Meta:
