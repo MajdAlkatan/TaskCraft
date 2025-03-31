@@ -10,6 +10,7 @@ import TestNotification from './Layout/Profile/TestNotification';
 import Login from "./Layout/Auth/Login/Login"
 import Register from "./Layout/Auth/Register/Register"
 import HelpSection from './Layout/Help/Help';
+import TaskCategories from './Layout/TaskCategories/TaskCategories'
 
 import './App.css';
 
@@ -30,6 +31,7 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/change-password" element={<ChangePassword />} />
                     <Route path="/test-notification" element={<TestNotification />} />
+                    <Route path="/TaskCategories" element={<TaskCategories />} />
                     <Route path="/help" element={<HelpSection />} />
 
                 </Routes>

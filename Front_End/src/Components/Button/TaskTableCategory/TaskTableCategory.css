@@ -1,0 +1,58 @@
+.task-status-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  margin-top: 10px;
+}
+
+.task-status-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.task-status-table th,
+.task-status-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.task-status-table th {
+  background-color: #f2f2f2;
+}
+
+.add-task-button {
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.add-task-button span{
+    color: #f44336;
+}
+
+.edit-button,
+.delete-button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.edit-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+.task-stat-header {
+  align-items: anchor-center;
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 1px;
+}

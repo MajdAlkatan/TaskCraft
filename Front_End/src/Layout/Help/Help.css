@@ -11,7 +11,7 @@
   padding: 10px;
   cursor: pointer;
   margin-right: 10px;
-  background-color: #007bff; /* Primary button color */
+  background-color: #fd8080; /* Primary button color */
   color: white; /* Text color */
   border: none;
   border-radius: 5px; /* Rounded corners */
@@ -19,7 +19,7 @@
 }
 
 .help-nav button:hover {
-  background-color: #0056b3; /* Darker shade on hover */
+  background-color: #f85b5b; /* Darker shade on hover */
 }
 
 .faq-section,

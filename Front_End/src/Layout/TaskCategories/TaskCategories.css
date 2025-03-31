@@ -1,0 +1,9 @@
+.taskCategoriesss{
+  width: 100%;
+}
+.catHeadr{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2px 4px;
+}

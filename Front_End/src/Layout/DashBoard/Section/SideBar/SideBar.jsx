@@ -35,6 +35,12 @@ function Sidebar() {
           <FaList className="sidebar-icon" /> My Task
         </a>
         <a 
+          onClick={() => handleNavigation("/TaskCategories")} 
+          className={activeMenu === "/TaskCategories" ? "active" : ""}
+        >
+          <FaQuestionCircle className="sidebar-icon" /> Task Categories
+        </a>
+        <a 
           onClick={() => handleNavigation("/settings")} 
           className={activeMenu === "/settings" ? "active" : ""}
         >
