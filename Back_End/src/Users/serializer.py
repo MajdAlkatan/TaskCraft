@@ -1,15 +1,35 @@
 from rest_framework import serializers
 
 from .models import User
+from src.Workspaces.models import Workspace , Users_Workspaces
+# from src.Workspaces.serializer import WorkspaceSerializer
 
 import logging
 logger = logging.getLogger(__name__)
 
+class NestedWorkspaceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Workspace
+        fields = ['id', 'name' , 'image']
+
 class UserSerializer(serializers.ModelSerializer):
+    workspaces = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'fullname', 'email', 'image']
+        fields = ['id', 'fullname', 'email', 'image' , 'workspaces']
         extra_kwargs = {'password': {'write_only':True}}
+
+    def get_workspaces(self, user_obj):
+        user_workspaces = Users_Workspaces.objects.filter(user=user_obj)
+        workspaces_data = []
+        for uw in user_workspaces:
+            workspace_data = NestedWorkspaceSerializer(uw.workspace , context=self.context).data
+            workspace_data['role'] = uw.user_role
+            workspaces_data.append(workspaces_data)
+        
+        return workspaces_data
+
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(

@@ -23,7 +23,7 @@ class UserAPI(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'] , serializer_class=RegisterSerializer)
     def register(self, request):
-        logger.debug(f"Raw request data: {request.data}")
+        # logger.debug(f"Raw request data: {request.data}")
         serializer = self.serializer_class(data = request.data)
         if serializer.is_valid():
             serializer.save()

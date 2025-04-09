@@ -1,7 +1,6 @@
 from django.db import models
 
 from src.Tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
-
 from src.Users.models import User
 
 # Create your models here.
@@ -14,7 +13,7 @@ class Workspace(TimeStampedModel):
     users = models.ManyToManyField(
         User,
         through= "Users_Workspaces",
-        through_fields=("workspace_id", "user_id"),
+        through_fields=("workspace", "user"),
         related_name='workspaces'
     )
 
@@ -25,8 +24,8 @@ class Workspace(TimeStampedModel):
 class Users_Workspaces(models.Model):
     class Meta:
         db_table = 'users_workspaces'
-    user_id = models.ForeignKey(User , name= 'user_id', on_delete=models.CASCADE)
-    workspace_id = models.ForeignKey(Workspace , name= 'workspace_id', on_delete=models.CASCADE)
+    user = models.ForeignKey(User , on_delete=models.CASCADE , related_name='membership')
+    workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , related_name='member')
     class User_Role(models.TextChoices):
         OWNER = 'owner' , 'Owner'
         PARTNER = 'partner' , 'Partner'

@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager , AbstractBaseUser , PermissionsMixin
-# from django.contrib.auth.hashers import make_password , check_password
 
 from django.core.exceptions import ValidationError
 
 
 from src.Tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
+
 
 # Create your models here.
 
@@ -37,6 +37,8 @@ class User(AbstractBaseUser , PermissionsMixin , TimeStampedModel):
     fullname = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     image = models.ImageField(null=True,blank=True , upload_to=f'Users/{id}/') #TODO put default photo
+    
+    #TODO Tasks (if needed)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
