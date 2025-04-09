@@ -30,18 +30,13 @@ class NestedUserSerializer(serializers.ModelSerializer):
         fields = ['id' , 'fullname' , 'email' , 'image']
 
 class WorkspaceSerializer(serializers.ModelSerializer):
-    users = serializers.SerializerMethodField(read_only=True)
-
+    members = MembershipSerializer(
+        many=True,
+        context={
+            "add_user_field": True,
+            "add_workspace_field": False,
+        }
+    )
     class Meta:
         model = Workspace
-        fields = ['id', 'name', 'users']
-    
-    def get_users(self, workspace_obj):
-        workspace_users = Users_Workspaces.objects.filter(workspace=workspace_obj)
-        users_data = []
-        for wu in workspace_users:
-            user_data = NestedUserSerializer(wu.user , context=self.context).data
-            user_data['role'] = wu.user_role
-            users_data.append(user_data)
-        
-        return users_data
+        fields = ['id', 'name' , 'members']
