@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     #own
     'src.Users.apps.UsersConfig',
     'src.Workspaces.apps.WorkspacesConfig',
-    'src.Tasks.apps.TasksConfig',
 
 ]
 
