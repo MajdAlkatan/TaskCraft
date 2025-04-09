@@ -27,8 +27,8 @@ class Workspace(TimeStampedModel):
 class Users_Workspaces(models.Model):
     class Meta:
         db_table = 'users_workspaces'
-    user = models.ForeignKey(User , on_delete=models.CASCADE , related_name='membership')
-    workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , related_name='member')
+    user = models.ForeignKey(User , on_delete=models.CASCADE , related_name='memberships')
+    workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , related_name='members')
     class User_Role(models.TextChoices):
         OWNER = 'owner' , 'Owner'
         PARTNER = 'partner' , 'Partner'

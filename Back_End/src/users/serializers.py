@@ -1,45 +1,69 @@
 from rest_framework import serializers
 
+from django.db import transaction
+
 from .models import User
+from workspaces.serializers import MembershipSerializer
 from workspaces.models import Workspace , Users_Workspaces
 # from src.Workspaces.serializer import WorkspaceSerializer
 
 import logging
 logger = logging.getLogger(__name__)
 
-class NestedWorkspaceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Workspace
-        fields = ['id', 'name' , 'image']
-
 class UserSerializer(serializers.ModelSerializer):
-    workspaces = serializers.SerializerMethodField(read_only=True)
+    memberships = MembershipSerializer(
+        many=True,
+        context={
+            "add_user_field": False,
+            "add_workspace_field": True,
+        }
+    )
     class Meta:
         model = User
-        fields = ['id', 'fullname', 'email', 'image' , 'workspaces']
+        fields = ['id', 'fullname', 'email', 'password' ,'image' , 'memberships']
         extra_kwargs = {'password': {'write_only':True}}
 
-    def get_workspaces(self, user_obj):
-        user_workspaces = Users_Workspaces.objects.filter(user=user_obj)
-        workspaces_data = []
-        for uw in user_workspaces:
-            workspace_data = NestedWorkspaceSerializer(uw.workspace , context=self.context).data
-            workspace_data['role'] = uw.user_role
-            workspaces_data.append(workspaces_data)
-        
-        return workspaces_data
+    def validate_password(self, value):
+        if not value:  # Check for empty string/None
+            raise serializers.ValidationError({'password': 'This field may not be blank (empty).'})
+        if len(value) < 8:
+            raise serializers.ValidationError({'password': 'must be 8 characters or more'})
+        return value
+
+    def update(self, instance, validated_data):
+        user_workspaces = validated_data.pop('workspaces')
+        with transaction.atomic():
+            instance = super().update(instance, validated_data)
+
+            if user_workspaces is not None:
+                # validate required fields
+                try:
+                    if not user_workspaces['id']:
+                        raise serializers.ValidationError({"id" : "this field may not be blank (empty)."})
+                    if not user_workspaces['name']:
+                        raise serializers.ValidationError({"name" : "this field may not be blank (empty)."})
+                except KeyError as e:
+                    raise serializers.ValidationError({f"{str(e)}": "this field is required!"})
+                # processing the workspaces data
+                for workspace in user_workspaces:
+                    # check if the workspace exists
+                    existed_ws = Workspace.objects.get(pk=workspace.id)
+                    # if it is exist so update it
+                    if existed_ws:
+                        Workspace.objects.update(**workspace)
+                    # if it is not exist so create the new workspace
+                    else:
+                        Workspace.objects.create(**workspace)
+            return instance
+
+
 
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True,
-        required=True,
-        style={'input_type': 'password'},
-        trim_whitespace=False,
-        allow_blank=False,  # Explicitly disallow empty strings
-    )
+    password = serializers.CharField(write_only=True,required=True,style={'input_type': 'password'})
     
+
     class Meta:
         model = User
         fields = ['fullname', 'email' , 'password']
@@ -49,7 +73,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
-        # logger.debug(f'in serializer, attrs:  {attrs}')
         try:
             if not attrs['password']:  # Check for empty string/None
                 raise serializers.ValidationError({
@@ -66,14 +89,27 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'password': 'must be 8 characters or more'})
 
         return attrs
-    
+
     def create(self, validated_data):
         try:
-            user = User.objects.create_user(
-                fullname = validated_data['fullname'],
-                email = validated_data['email'],
-                password = validated_data['password']
-            )
+            with transaction.atomic():
+                user = User.objects.create_user(
+                    fullname = validated_data['fullname'],
+                    email = validated_data['email'],
+                    password = validated_data['password']
+                )
+
+                default_workspace = Workspace.objects.create(
+                    name="Default Workspace",
+                    image=None #TODO put a default workspace-image path
+                )
+
+                Users_Workspaces.objects.create(
+                    user=user,
+                    workspace=default_workspace,
+                    user_role='owner'
+                )
+
             return user
         except KeyError as e:
             raise serializers.ValidationError(f'{str(e)}: this field is required !')

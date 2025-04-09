@@ -37,7 +37,7 @@ class User(AbstractBaseUser , PermissionsMixin , TimeStampedModel):
     class Meta:
         app_label = 'Users'
         db_table = 'users'
-    fullname = models.CharField(max_length=100)
+    fullname = models.CharField(max_length=100 , unique=True)
     email = models.EmailField(unique=True)
     image = models.ImageField(null=True,blank=True , upload_to=f'Users/{id}/') #TODO put default photo
     

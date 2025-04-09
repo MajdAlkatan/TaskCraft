@@ -6,10 +6,23 @@ from .models import Workspace , Users_Workspaces
 from users.models import User
 
 
-class UsersWorkspacesSerializer(serializers.ModelSerializer):
+class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users_Workspaces
-        fields = '__all__'
+        fields = [
+            'id',
+            'user_role'
+        ]
+
+    def __init__(self, instance=None, data=..., **kwargs):
+        super().__init__(instance, data, **kwargs)
+
+        if self.context.get('add_user_field' , False):
+            self.fields['user'] = serializers.PrimaryKeyRelatedField()
+        if self.context.get('add_workspace_field' , False):
+            self.fields['workspace'] = serializers.PrimaryKeyRelatedField()
+        
+
 
 class NestedUserSerializer(serializers.ModelSerializer):
     class Meta:
