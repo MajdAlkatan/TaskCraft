@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import User
-from src.Workspaces.models import Workspace , Users_Workspaces
+from workspaces.models import Workspace , Users_Workspaces
 # from src.Workspaces.serializer import WorkspaceSerializer
 
 import logging

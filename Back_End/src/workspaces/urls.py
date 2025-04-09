@@ -9,5 +9,3 @@ router.register(r'workspaces' , WorkspaceAPI)
 urlpatterns = [
     *router.urls
 ]
-
-

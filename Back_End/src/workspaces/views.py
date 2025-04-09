@@ -1,3 +1,6 @@
+from django.shortcuts import render
+
+# Create your views here.
 from django.core import exceptions
 from django.shortcuts import get_object_or_404
 
@@ -6,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from .models import Workspace , User
-from .serializer import WorkspaceSerializer , UsersWorkspacesSerializer
+from .serializers import WorkspaceSerializer , UsersWorkspacesSerializer
 
 # Create your views here.
 

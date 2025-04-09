@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Workspace , Users_Workspaces
 
 # from src.Users.serializer import UserSerializer
-from src.Users.models import User
+from users.models import User
 
 
 class UsersWorkspacesSerializer(serializers.ModelSerializer):

@@ -1,7 +1,10 @@
 from django.db import models
 
-from src.Tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
-from src.Users.models import User
+# Create your models here.
+from django.db import models
+
+from tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
+from users.models import User
 
 # Create your models here.
 class Workspace(TimeStampedModel):

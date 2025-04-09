@@ -46,9 +46,6 @@ INSTALLED_APPS = [
     'dotenv',
 
     #own
-    'src.Users.apps.UsersConfig',
-    'src.Workspaces.apps.WorkspacesConfig',
-    'src.Tasks.apps.TasksConfig',
 
 ]
 
@@ -136,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'Users.User'
+# AUTH_USER_MODEL = 'Users.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

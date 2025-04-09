@@ -1,10 +1,13 @@
 from django.db import models
+
+# Create your models here.
+from django.db import models
 from django.contrib.auth.models import BaseUserManager , AbstractBaseUser , PermissionsMixin
 
 from django.core.exceptions import ValidationError
 
 
-from src.Tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
+from tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
 
 
 # Create your models here.
