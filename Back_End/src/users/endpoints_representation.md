@@ -64,7 +64,31 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-8. ## Login
+8. ## Token
+    - Method: `POST`
+    - Serializer: `users.CustomTokenObtainPairSerializer`
+    - Functionality: `return access_token and refresh_token and information about user such as email and fullname (casuse: so the client don't need to send another request for user information)`
+    - Authentication: `not required`
+    - Authorization: `not required`
+    - URL: `/users/token/`
+    - Notes: `send 'email' and 'password' in the request body`
+8. ## Token-Refresh
+    - Method: `POST`
+    - Serializer: `TokenRefreshSerializer`
+    - Functionality: `refreshes the access token`
+    - Authentication: `not required`
+    - Authorization: `not required`
+    - URL: `/users/token/refresh/`
+    - Notes: `send 'refresh = (refresh token)' in the request | the response will return with a new access token`
+10. ## Update-User-Profile-Info
+    - Method: `PUT/PATCH`
+    - Serializer: `UserSerializer`
+    - Functionality: `update the user fields except the password and the image fields | if there is workspaces in the request will be added and if any workspace already exist it will be updated with the new values`
+    - Authentication: `required`
+    - Authorization: `normal-user / admin`
+    - URL: `/users/{id}`
+    - Notes: `No Notes`
+1.  ## Change-User-Password
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -72,7 +96,7 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-9. ## Logout
+2.  ## Change-User-Image
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -80,7 +104,7 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-10. ## Change-Workspace-Name-Or-Image
+3.  ## Change-Workspace-Name-Or-Image
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -88,28 +112,3 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-11. ## Update-Profile-Info
-    - Method: ``
-    - Serializer: ``
-    - Functionality: ``
-    - Authentication: ``
-    - Authorization: ``
-    - URL: ``
-    - Notes: `No Notes`
-12. ## Change-Password
-    - Method: ``
-    - Serializer: ``
-    - Functionality: ``
-    - Authentication: ``
-    - Authorization: ``
-    - URL: ``
-    - Notes: `No Notes`
-13. ## Change-Image
-    - Method: ``
-    - Serializer: ``
-    - Functionality: ``
-    - Authentication: ``
-    - Authorization: ``
-    - URL: ``
-    - Notes: `No Notes`
-
