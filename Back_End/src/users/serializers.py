@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from django.db import transaction
 
@@ -117,3 +118,16 @@ class RegisterSerializer(serializers.ModelSerializer):
             return user
         except KeyError as e:
             raise serializers.ValidationError(f'{str(e)}: this field is required !')
+        
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    username_field = 'email'  # Use email instead of username
+
+    def validate(self, attrs):
+        # The default result (access/refresh tokens)
+        data = super().validate(attrs)
+        # Add custom claims or user data if needed
+        data['user'] = {
+            'email': self.user.email,
+            'fullname': self.user.fullname
+        }
+        return data
