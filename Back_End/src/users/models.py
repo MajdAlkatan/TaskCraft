@@ -35,7 +35,6 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractBaseUser , PermissionsMixin , TimeStampedModel):
     class Meta:
-        app_label = 'Users'
         db_table = 'users'
     fullname = models.CharField(max_length=100 , unique=True)
     email = models.EmailField(unique=True)
