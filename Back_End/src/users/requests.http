@@ -20,8 +20,8 @@ POST http://127.0.0.1:8000/api/users/token/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "email": "mas@mm.com",
-    "password": "test"
+    "email": "j@j.com",
+    "password": "testtest"
 }
 
 ###
@@ -31,3 +31,14 @@ Content-Type: application/json
 {
     "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NDM3MDEzMCwiaWF0IjoxNzQ0MjgzNzMwLCJqdGkiOiIzMjVkOWM1M2QxNjE0MGJmODZkZTU2NDA0MGE3ZDM1MCIsInVzZXJfaWQiOjF9.QWXrjaT7bRVFSK855vQC-rhAyfn-lm4g2xPRFWrKJuA"
 }
+
+###
+PUT http://127.0.0.1:8000/api/users/2/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Mjk3NTAyLCJpYXQiOjE3NDQyOTM5MDIsImp0aSI6ImRlY2RkYzRmM2U4YTRmYzg5N2M5ZDc4NTcyM2JhYjU2IiwidXNlcl9pZCI6Mn0.rHOwOBTs2fvdRv9QN8SoJNY71qN1BwzwdRCJaQ5nIAA
+
+{
+    "fullname": "john-doe"
+}
+
+###

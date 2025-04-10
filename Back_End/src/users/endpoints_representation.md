@@ -5,7 +5,8 @@
     - Authentication: ``
     - Authorization: ``
     - URL: ``
-    - Notes: `No Notes` -->
+    - Notes: `No Notes`
+    - status: `` -->
 
 # End-Points representation
 1. ## Registration
@@ -16,6 +17,7 @@
    - Authorization: `Not required`
    - URL: `/register/`
    - Notes: `No Notes`
+   - status: `ready`
 2. ## Get-User-Info
    - Method: `GET`
    - Serializer: `UserSerializer`
@@ -24,6 +26,7 @@
    - Authorization: `user: can show just his own info | admin: can show any user info by id`
    - URL: `/users/{id}/`
    - Notes: `admin needs to insert the user-id in the request but the user don't`
+   - status: `ready`
 3. ## Get-All-Users-Info
     - Method: `GET`
     - Serializer: `UserSerializer`
@@ -32,7 +35,8 @@
     - Authorization: `Only admins can use this endpoint`
     - URL: `/users/`
     - Notes: `this endpoint can support filtering/searching/ordering`
-8. ## Token
+    - status: `ready`
+4. ## Token
     - Method: `POST`
     - Serializer: `users.CustomTokenObtainPairSerializer`
     - Functionality: `return access_token and refresh_token and information about user such as email and fullname (casuse: so the client don't need to send another request for user information)`
@@ -40,7 +44,8 @@
     - Authorization: `not required`
     - URL: `/users/token/`
     - Notes: `send 'email' and 'password' in the request body`
-8. ## Token-Refresh
+    - status: `ready`
+5. ## Token-Refresh
     - Method: `POST`
     - Serializer: `TokenRefreshSerializer`
     - Functionality: `refreshes the access token`
@@ -48,7 +53,8 @@
     - Authorization: `not required`
     - URL: `/users/token/refresh/`
     - Notes: `send 'refresh = (refresh token)' in the request | the response will return with a new access token`
-10. ## Update-User-Profile-Info
+    - status: `ready`
+6.  ## Update-User-Profile-Info
     - Method: `PUT/PATCH`
     - Serializer: `UserSerializer`
     - Functionality: `update the user fields except the password and the image fields | if there is workspaces in the request will be added and if any workspace already exist it will be updated with the new values`
@@ -56,7 +62,8 @@
     - Authorization: `normal-user / admin`
     - URL: `/users/{id}`
     - Notes: `No Notes`
-1.  ## Change-User-Password
+    - status: `coming soon...`
+7.  ## Change-User-Password
     - Method: `POST`
     - Serializer: `UserSerializer`
     - Functionality: `passing the old password and the new one`
@@ -64,7 +71,8 @@
     - Authorization: `normal-user only`
     - URL: `/users/{id}/change_password`
     - Notes: `No Notes`
-2.  ## Change-User-Image
+    - status: `coming soon...`
+8.  ## Change-User-Image
     - Method: `POST`
     - Serializer: `UserSerializer`
     - Functionality: `passing the image`
@@ -72,7 +80,8 @@
     - Authorization: `normal-user only`
     - URL: `/users/{id}/change_image`
     - Notes: `coming soon ... (till decide how to deal with images)`
-4. ## Join-Workspace
+    - status: `coming soon...`
+9. ## Join-Workspace
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -80,7 +89,8 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-5. ## Invite-Other-User-To-Workspace
+    - status: `coming soon...`
+10. ## Invite-Other-User-To-Workspace
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -88,7 +98,8 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-6. ## Change-Invite-status
+    - status: `coming soon...`
+10. ## Kick-Other-User-From-Workspace
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -96,7 +107,8 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-7. ## Show-Invites
+    - status: `coming soon...`
+10. ## Change-Other-User-Role-In-Workspace
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -104,7 +116,8 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-3.  ## Change-Workspace-Name-Or-Image
+    - status: `coming soon...`
+11. ## Change-Invite-status
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -112,3 +125,25 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
+    - status: `coming soon...`
+12. ## Show-Invites
+    - Method: ``
+    - Serializer: ``
+    - Functionality: ``
+    - Authentication: ``
+    - Authorization: ``
+    - URL: ``
+    - Notes: `No Notes`
+    - status: `coming soon...`
+13. ## Change-Workspace-Name-Or-Image
+    - Method: ``
+    - Serializer: ``
+    - Functionality: ``
+    - Authentication: ``
+    - Authorization: ``
+    - URL: ``
+    - Notes: `No Notes`
+    - status: `coming soon...`
+
+
+

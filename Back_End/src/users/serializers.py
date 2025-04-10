@@ -31,7 +31,21 @@ class UserSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
         ]
-        extra_kwargs = {'password': {'write_only':True}}
+        extra_kwargs = {
+            'password': {
+                'write_only': True,
+                'required': False, # because here we update and never create
+            },
+            'image': {
+                'required': False
+            },
+            'email': {
+                'read_only': True # user can't change the email specified
+            },
+            'memberships': {
+                'required': False
+            }
+        }
 
     def validate_password(self, value):
         if not value:  # Check for empty string/None
@@ -41,11 +55,11 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def update(self, instance, validated_data):
-        user_workspaces = validated_data.pop('workspaces')
+        user_workspaces = validated_data.pop('memberships')
         with transaction.atomic():
             instance = super().update(instance, validated_data)
 
-            if user_workspaces is not None:
+            if user_workspaces:
                 # validate required fields
                 try:
                     if not user_workspaces['id']:

@@ -32,6 +32,22 @@ class UserViewSet(viewsets.ModelViewSet):
             # normal user can view and update only his own info
         return qs
 
+
+
+
+
+    # update-user-profile-info (PUT) (with the current user-model the PUT request is changing the fullname only)
+    def update(self, request, *args, **kwargs):
+        # PUT request shouldn't include password or image update
+        # there is an independent api's for each of these fields
+        if 'password' in request.data:
+            request.data.pop('password')
+        if 'image' in request.data:
+            request.data.pop('image')
+        if 'memberships' in request.data:
+            request.data.pop('memberships')
+        return super().update(request, *args, **kwargs)
+
     # register
     def create(self, request, *args, **kwargs):
         return Response(
