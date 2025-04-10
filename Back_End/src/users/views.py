@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.contrib.auth.hashers import check_password
+from django.core.exceptions import ValidationError
 from rest_framework import viewsets , status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -6,7 +7,7 @@ from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import User
-from .serializers import UserSerializer , RegisterSerializer , CustomTokenObtainPairSerializer
+from .serializers import UserSerializer , RegisterSerializer , ChangePasswordSerializer
 # Create your views here.
 
 import logging
@@ -32,10 +33,26 @@ class UserViewSet(viewsets.ModelViewSet):
             # normal user can view and update only his own info
         return qs
 
+    @action(detail=True , methods=['patch'])
+    def change_image(self , request):
+        pass #TODO
+
+    # Here We put 'detail-False' because even admin shouldn't be able to change users passwords for security reasons
+    @action(detail=False , methods=['patch'] , serializer_class=ChangePasswordSerializer)
+    def change_password(self , request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        request.user.set_password(serializer.validated_data['new_password'])
+        request.user.save()
+        return Response({"new_password": serializer.validated_data['new_password']} , status=status.HTTP_202_ACCEPTED)
 
 
-
-
+    def partial_update(self, request, *args, **kwargs): # canceled because the PUT request actually updates only the fullname
+        return Response(
+            {"detail": "Method not allowed"},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
     # update-user-profile-info (PUT) (with the current user-model the PUT request is changing the fullname only)
     def update(self, request, *args, **kwargs):
         # PUT request shouldn't include password or image update
