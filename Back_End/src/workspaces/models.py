@@ -12,7 +12,7 @@ class Workspace(TimeStampedModel):
         db_table = 'workspaces'
     name = models.CharField(max_length=255)
     image = models.ImageField(null=True,blank=True , upload_to=f'Workspaces/{id}/') #TODO put default photo
-    owner = models.ForeignKey(User , related_name='own_workspaces' , on_delete=models.CASCADE, required=True, null=False, blank=False)
+    owner = models.ForeignKey(User , related_name='own_workspaces' , on_delete=models.CASCADE, null=False, blank=False)
     users = models.ManyToManyField(
         User,
         through= "Users_Workspaces",

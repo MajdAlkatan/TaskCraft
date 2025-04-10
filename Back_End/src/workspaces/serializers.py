@@ -31,9 +31,9 @@ class MembershipSerializer(serializers.ModelSerializer):
         super().__init__(instance, data, **kwargs)
 
         if self.context.get('add_user_field' , False):
-            self.fields['user'] = serializers.PrimaryKeyRelatedField()
+            self.fields['user'] = serializers.PrimaryKeyRelatedField(read_only=True)
         if self.context.get('add_workspace_field' , False):
-            self.fields['workspace'] = serializers.PrimaryKeyRelatedField()
+            self.fields['workspace'] = serializers.PrimaryKeyRelatedField(read_only=True)
 
 class WorkspaceSerializer(serializers.ModelSerializer):
     owner = serializers.PrimaryKeyRelatedField(read_only=True)
