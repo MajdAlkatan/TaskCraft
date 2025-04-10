@@ -1,34 +1,57 @@
 from rest_framework import serializers
 
-from .models import Workspace , Users_Workspaces
+from .models import Workspace , Users_Workspaces , Invite
 
 # from src.Users.serializer import UserSerializer
 from users.models import User
 
 
-class UsersWorkspacesSerializer(serializers.ModelSerializer):
+class InviteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invite
+        fields = [
+            'id',
+            'sender',
+            'receiver',
+            'workspace',
+            'status',
+            'created_at',
+            'updated_at'
+        ]
+
+class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users_Workspaces
-        fields = '__all__'
+        fields = [
+            'id',
+            'user_role'
+        ]
 
-class NestedUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id' , 'fullname' , 'email' , 'image']
+    def __init__(self, instance=None, data=..., **kwargs):
+        super().__init__(instance, data, **kwargs)
+
+        if self.context.get('add_user_field' , False):
+            self.fields['user'] = serializers.PrimaryKeyRelatedField(read_only=True)
+        if self.context.get('add_workspace_field' , False):
+            self.fields['workspace'] = serializers.PrimaryKeyRelatedField(read_only=True)
 
 class WorkspaceSerializer(serializers.ModelSerializer):
-    users = serializers.SerializerMethodField(read_only=True)
-
+    owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    members = MembershipSerializer(
+        many=True,
+        context={
+            "add_user_field": True,
+            "add_workspace_field": False,
+        }
+    )
     class Meta:
         model = Workspace
-        fields = ['id', 'name', 'users']
-    
-    def get_users(self, workspace_obj):
-        workspace_users = Users_Workspaces.objects.filter(workspace=workspace_obj)
-        users_data = []
-        for wu in workspace_users:
-            user_data = NestedUserSerializer(wu.user , context=self.context).data
-            user_data['role'] = wu.user_role
-            users_data.append(user_data)
-        
-        return users_data
+        fields = [
+            'id',
+            'name',
+            'image',
+            'owner',
+            'members',
+            'created_at',
+            'updated_at,'
+        ]

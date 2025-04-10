@@ -9,10 +9,10 @@ from users.models import User
 # Create your models here.
 class Workspace(TimeStampedModel):
     class Meta:
-        app_label = 'Workspaces'
         db_table = 'workspaces'
     name = models.CharField(max_length=255)
     image = models.ImageField(null=True,blank=True , upload_to=f'Workspaces/{id}/') #TODO put default photo
+    owner = models.ForeignKey(User , related_name='own_workspaces' , on_delete=models.CASCADE, null=False, blank=False)
     users = models.ManyToManyField(
         User,
         through= "Users_Workspaces",
@@ -27,10 +27,9 @@ class Workspace(TimeStampedModel):
 class Users_Workspaces(models.Model):
     class Meta:
         db_table = 'users_workspaces'
-    user = models.ForeignKey(User , on_delete=models.CASCADE , related_name='membership')
-    workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , related_name='member')
+    user = models.ForeignKey(User , on_delete=models.CASCADE , related_name='memberships')
+    workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , related_name='members')
     class User_Role(models.TextChoices):
-        OWNER = 'owner' , 'Owner'
         PARTNER = 'partner' , 'Partner'
         CAN_EDIT = 'can_edit' , 'Can Edit'
         CAN_VIEW = 'can_view' , 'Can View'
@@ -39,3 +38,30 @@ class Users_Workspaces(models.Model):
         choices = User_Role.choices,
         default= User_Role.CAN_VIEW
     )
+
+class Invite(TimeStampedModel):
+    class Meta:
+        db_table = 'invites'
+        unique_together = ['sender' , 'receiver' , 'workspace']
+    sender = models.ForeignKey(User , related_name='sent_invites' , on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User , related_name='received_invites' , on_delete=models.CASCADE)
+    workspace = models.ForeignKey(Workspace , related_name='invites' , on_delete=models.CASCADE)
+    class Status_Choices(models.TextChoices):
+        PENDING = 'pending' , 'Pending',
+        ACCEPTED = 'accepted' , 'Accepted',
+        REJECTED = 'rejected' , 'Rejected',
+        CANCELED = 'canceled' , 'Canceled'
+    status = models.CharField(
+        max_length=8,
+        choices=Status_Choices,
+        default=Status_Choices.PENDING
+    )
+
+    # checking if the invite still waiting for an action from user
+    def invalid_invite(self):
+        if self.status == 'pending':
+            return False
+        return True
+
+    def __str__(self):
+        return f"user {self.sender.fullname} sent an invite to user {self.receiver.fullname} into the workspace {self.workspace.name}"
