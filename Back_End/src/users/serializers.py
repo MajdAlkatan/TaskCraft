@@ -20,7 +20,16 @@ class UserSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = User
-        fields = ['id', 'fullname', 'email', 'password' ,'image' , 'memberships']
+        fields = [
+            'id',
+            'fullname',
+            'email',
+            'password',
+            'image',
+            'memberships',
+            'created_at',
+            'updated_at',
+        ]
         extra_kwargs = {'password': {'write_only':True}}
 
     def validate_password(self, value):
@@ -54,7 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
                     # if it is not exist so create the new workspace
                     else:
                         Workspace.objects.create(**workspace)
-            return instance
+        return instance
 
 
 
@@ -101,13 +110,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
                 default_workspace = Workspace.objects.create(
                     name="Default Workspace",
-                    image=None #TODO put a default workspace-image path
-                )
-
-                Users_Workspaces.objects.create(
-                    user=user,
-                    workspace=default_workspace,
-                    user_role='owner'
+                    image=None, #TODO put a default workspace-image path
+                    owner=user
                 )
 
             return user

@@ -1,10 +1,23 @@
 from rest_framework import serializers
 
-from .models import Workspace , Users_Workspaces
+from .models import Workspace , Users_Workspaces , Invite
 
 # from src.Users.serializer import UserSerializer
 from users.models import User
 
+
+class InviteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invite
+        fields = [
+            'id',
+            'sender',
+            'receiver',
+            'workspace',
+            'status',
+            'created_at',
+            'updated_at'
+        ]
 
 class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,15 +34,9 @@ class MembershipSerializer(serializers.ModelSerializer):
             self.fields['user'] = serializers.PrimaryKeyRelatedField()
         if self.context.get('add_workspace_field' , False):
             self.fields['workspace'] = serializers.PrimaryKeyRelatedField()
-        
-
-
-class NestedUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id' , 'fullname' , 'email' , 'image']
 
 class WorkspaceSerializer(serializers.ModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(read_only=True)
     members = MembershipSerializer(
         many=True,
         context={
@@ -39,4 +46,12 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = Workspace
-        fields = ['id', 'name' , 'members']
+        fields = [
+            'id',
+            'name',
+            'image',
+            'owner',
+            'members',
+            'created_at',
+            'updated_at,'
+        ]
