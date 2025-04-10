@@ -32,38 +32,6 @@
     - Authorization: `Only admins can use this endpoint`
     - URL: `/users/`
     - Notes: `this endpoint can support filtering/searching/ordering`
-4. ## Join-Workspace
-    - Method: ``
-    - Serializer: ``
-    - Functionality: ``
-    - Authentication: ``
-    - Authorization: ``
-    - URL: ``
-    - Notes: `No Notes`
-5. ## Invite-Other-User-To-Workspace
-    - Method: ``
-    - Serializer: ``
-    - Functionality: ``
-    - Authentication: ``
-    - Authorization: ``
-    - URL: ``
-    - Notes: `No Notes`
-6. ## Change-Invite-status
-    - Method: ``
-    - Serializer: ``
-    - Functionality: ``
-    - Authentication: ``
-    - Authorization: ``
-    - URL: ``
-    - Notes: `No Notes`
-7. ## Show-Invites
-    - Method: ``
-    - Serializer: ``
-    - Functionality: ``
-    - Authentication: ``
-    - Authorization: ``
-    - URL: ``
-    - Notes: `No Notes`
 8. ## Token
     - Method: `POST`
     - Serializer: `users.CustomTokenObtainPairSerializer`
@@ -89,6 +57,22 @@
     - URL: `/users/{id}`
     - Notes: `No Notes`
 1.  ## Change-User-Password
+    - Method: `POST`
+    - Serializer: `UserSerializer`
+    - Functionality: `passing the old password and the new one`
+    - Authentication: `required`
+    - Authorization: `normal-user only`
+    - URL: `/users/{id}/change_password`
+    - Notes: `No Notes`
+2.  ## Change-User-Image
+    - Method: `POST`
+    - Serializer: `UserSerializer`
+    - Functionality: `passing the image`
+    - Authentication: `required`
+    - Authorization: `normal-user only`
+    - URL: `/users/{id}/change_image`
+    - Notes: `coming soon ... (till decide how to deal with images)`
+4. ## Join-Workspace
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -96,7 +80,23 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-2.  ## Change-User-Image
+5. ## Invite-Other-User-To-Workspace
+    - Method: ``
+    - Serializer: ``
+    - Functionality: ``
+    - Authentication: ``
+    - Authorization: ``
+    - URL: ``
+    - Notes: `No Notes`
+6. ## Change-Invite-status
+    - Method: ``
+    - Serializer: ``
+    - Functionality: ``
+    - Authentication: ``
+    - Authorization: ``
+    - URL: ``
+    - Notes: `No Notes`
+7. ## Show-Invites
     - Method: ``
     - Serializer: ``
     - Functionality: ``
