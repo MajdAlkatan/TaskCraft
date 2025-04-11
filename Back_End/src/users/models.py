@@ -42,9 +42,10 @@ class User(AbstractBaseUser , PermissionsMixin , TimeStampedModel):
         db_table = 'users'
     fullname = models.CharField(max_length=100 , unique=True)
     email = models.EmailField(unique=True)
-    image = models.ImageField(null=True,blank=True , upload_to=user_image_upload_path) #TODO put default photo
-    
-    #TODO Tasks (if needed)
+    image = models.ImageField( 
+        upload_to=user_image_upload_path,
+        default="Users\default.png"
+    )
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

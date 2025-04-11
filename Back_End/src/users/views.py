@@ -4,6 +4,7 @@ from rest_framework import viewsets , status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import User
@@ -23,13 +24,20 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
+    # Pagination
+    pagination_class = PageNumberPagination
+    pagination_class.page_size=50
+    pagination_class.max_page_size=120
+    pagination_class.page_size_query_param='size'
     
     def get_permissions(self):
-        self.permission_classes = [AllowAny]
+        self.permission_classes = [IsAuthenticated]
         if self.action == 'retrieve':
             self.permission_classes = [IsAdminUser]
             # this means only admin can retrieve specific user info,
             # while normal user can access his own info by /users/ (list){because it will list just his own profile}
+        if self.action == 'register':
+            self.permission_classes = [AllowAny]
         return super().get_permissions()
     def get_queryset(self):
         qs = super().get_queryset()
@@ -57,22 +65,14 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({"new_password": serializer.validated_data['new_password']} , status=status.HTTP_202_ACCEPTED)
 
 
-    def partial_update(self, request, *args, **kwargs): # canceled because the PUT request actually updates only the fullname
-        return Response(
-            {"detail": "Method not allowed"},
-            status=status.HTTP_405_METHOD_NOT_ALLOWED
-        )
-    # update-user-profile-info (PUT) (with the current user-model the PUT request is changing the fullname only)
-    def update(self, request, *args, **kwargs):
-        # PUT request shouldn't include password or image update
-        # there is an independent api's for each of these fields
-        if 'password' in request.data:
-            request.data.pop('password')
+    def partial_update(self, request, *args, **kwargs): # this is updating user fullname only
+        if 'workspaces' in request.data:
+            request.data.pop('workspaces')
         if 'image' in request.data:
             request.data.pop('image')
-        if 'memberships' in request.data:
-            request.data.pop('memberships')
-        return super().update(request, *args, **kwargs)
+        if 'password' in request.data:
+            request.data.pop('password')
+        return super().partial_update(request, *args, **kwargs)
 
     # register
     def create(self, request, *args, **kwargs):

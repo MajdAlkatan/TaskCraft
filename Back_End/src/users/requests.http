@@ -33,7 +33,7 @@ Content-Type: application/json
 }
 
 ###
-PUT http://127.0.0.1:8000/api/users/2/ HTTP/1.1
+PATCH http://127.0.0.1:8000/api/users/2/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0MzAxMTc4LCJpYXQiOjE3NDQyOTc1NzgsImp0aSI6ImM4ZDczMmNlODJlMzRjZmU4ZTdmMGViN2VjNTI5OTdiIiwidXNlcl9pZCI6Mn0.PDLMEbkl6nnQ-nsDt5lTkO2KeOLIn3LohAanSBtQ-Wk
 
