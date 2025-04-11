@@ -1,7 +1,7 @@
 import React from 'react';
 import './WelcomeBack.css'; // Import CSS for styling
 
-const WelcomeBack = () => {
+const WelcomeBack = ({onInviteClick}) => {
   const users = [
     'user1.jpg', // Replace with actual avatar image paths
     'user2.jpg',
@@ -20,7 +20,7 @@ const WelcomeBack = () => {
           <img key={index} src={user} alt={`User ${index + 1}`} className="avatar" />
         ))}
       </div>
-      <button className="invite-button">Invite</button>
+      <button className="invite-button"  onClick={onInviteClick}>Invite</button>
     </div>
   );
 };

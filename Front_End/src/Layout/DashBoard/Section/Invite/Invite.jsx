@@ -1,12 +1,14 @@
-import React from 'react'
-import DefulteInput from "../../../../Components/Input/DefulteInput/DefulteInput"
-import FormButton from '../../../../Components/Button/FormButton/FormButton'
-function Invite() {
+import React from 'react';
+import './Invite.css'; // Import the CSS file
+import DefulteInput from "../../../../Components/Input/DefulteInput/DefulteInput";
+import FormButton from '../../../../Components/Button/FormButton/FormButton';
+
+function Invite({ onClose }) {
     return (
-        <dialog className='Invite-dialog'>
-            <header>
-                <h2>Send an invite to a new member</h2>
-                <button>Go Back</button>
+        <dialog className='invite-dialog'>
+            <header className='invite-header'>
+                <h2 className='invite-title'>Send an invite to a new member</h2>
+                <button className='invite-close-button' onClick={onClose}>Go Back</button>
             </header>
             <div className="invite-body">
                 <div className="invite-email">
@@ -14,20 +16,19 @@ function Invite() {
                         placeholder='example@gmail.com'
                         label={'Email'}
                         type='Email'
+                        className='invit-input'
+
                     />
                     <FormButton
                         label='Send Invite'
                     />
                 </div>
-                <div>
-                    <p>Members</p>
-
+                <div className="invite-members">
+                    <p className="invite-members-title">Members</p>
                 </div>
             </div>
-
-
         </dialog>
-    )
+    );
 }
 
-export default Invite
+export default Invite;

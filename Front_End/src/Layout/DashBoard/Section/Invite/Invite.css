@@ -1,0 +1,65 @@
+dialog.invite-dialog {
+  width: 40%; /* Set a fixed width for the dialog */
+  padding: 10px; /* Add padding inside the dialog */
+  border: none; /* Remove default border */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background-color: #ffffff; /* White background */
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack children vertically */
+  z-index: 1111;
+}
+
+.invite-header {
+  display: flex; /* Use flexbox for header layout */
+  justify-content: space-between; /* Space between title and button */
+  align-items: center; /* Center items vertically */
+  margin-bottom: 20px; /* Space below the header */
+}
+
+.invite-title {
+  font-size: 1rem; /* Font size for the title */
+  margin: 0; /* Remove default margin */
+}
+
+.invite-close-button {
+  background-color: transparent; /* Transparent background */
+  border: none; /* Remove border */
+  color: #007bff; /* Link color */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 1rem; /* Font size for button */
+}
+
+.invite-close-button:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+.invite-body {
+  display: flex; /* Use flexbox for body layout */
+  flex-direction: column; /* Stack children vertically */
+  padding: 5px;
+  border: 1px solid black;
+  margin: 0;
+}
+
+.invite-email {
+  display: flex;
+  justify-content: start;
+  gap: 30px;
+  width: 100%;
+  align-items: end;
+}
+
+
+.invite-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.invite-members {
+  margin-top: 10px; /* Space above members section */
+}
+
+.invite-members-title {
+  font-size: 0.9rem; /* Font size for paragraph */
+  color: #666; /* Gray color for text */
+}
