@@ -6,9 +6,9 @@
     - Authorization: ``
     - URL: ``
     - Notes: `No Notes`
-    - status: `` -->
+    - status: `coming soon...` -->
 
-# End-Points representation
+# User End-Points representation
 1. ## Registration
    - Method: `POST`
    - Serializer: `RegisterSerializer`
@@ -23,23 +23,23 @@
    - Serializer: `UserSerializer`
    - Functionality: `just getting the user info with his workspaces`
    - Authentication: `required`
-   - Authorization: `user: can show just his own info | admin: can show any user info by id`
+   - Authorization: `only admin can show any user info by id`
    - URL: `/users/{id}/`
-   - Notes: `admin needs to insert the user-id in the request but the user don't`
+   - Notes: `admin needs to insert the user-id in the request`
    - status: `ready`
 3. ## Get-All-Users-Info
     - Method: `GET`
     - Serializer: `UserSerializer`
     - Functionality: `just getting all users info (Paginated respones)`
     - Authentication: `required`
-    - Authorization: `Only admins can use this endpoint`
+    - Authorization: `admin can get all users info | normal-user can get only his own info`
     - URL: `/users/`
     - Notes: `this endpoint can support filtering/searching/ordering`
-    - status: `ready`
+    - status: `in-development[Pagination/ filtering/searching/ordering]`
 4. ## Token
     - Method: `POST`
     - Serializer: `users.CustomTokenObtainPairSerializer`
-    - Functionality: `return access_token and refresh_token and information about user such as email and fullname (casuse: so the client don't need to send another request for user information)`
+    - Functionality: `return access_token and refresh_token and information about user such as email and fullname (cause: so the client don't need to send another request for user information)`
     - Authentication: `not required`
     - Authorization: `not required`
     - URL: `/users/token/`
@@ -57,7 +57,7 @@
 6.  ## Update-User-Profile-Info
     - Method: `PUT/PATCH`
     - Serializer: `UserSerializer`
-    - Functionality: `update the user fields except the password and the image fields | if there is workspaces in the request will be added and if any workspace already exist it will be updated with the new values`
+    - Functionality: `update the user fields except the password and the image fields (fullname/workspaces)| if there is workspaces in the request will be added and if any workspace already exist it will be updated with the new values`
     - Authentication: `required`
     - Authorization: `normal-user / admin`
     - URL: `/users/{id}`
@@ -65,23 +65,24 @@
     - status: `coming soon...`
 7.  ## Change-User-Password
     - Method: `POST`
-    - Serializer: `UserSerializer`
+    - Serializer: `ChangePasswordSerializer`
     - Functionality: `passing the old password and the new one`
     - Authentication: `required`
     - Authorization: `normal-user only`
-    - URL: `/users/{id}/change_password`
-    - Notes: `No Notes`
+    - URL: `/users/change_password`
+    - Notes: `admin can't change users passwords`
     - status: `ready`
 8.  ## Change-User-Image
     - Method: `POST`
-    - Serializer: `UserSerializer`
-    - Functionality: `passing the image`
+    - Serializer: `ChangeImageSerializer`
+    - Functionality: `changing the profile image`
     - Authentication: `required`
     - Authorization: `normal-user only`
     - URL: `/users/{id}/change_image`
-    - Notes: `coming soon ... (till decide how to deal with images)`
+    - Notes: `No Notes`
     - status: `ready`
-9. ## Join-Workspace
+<!-- Invites & Workspaces -->
+1.  ## Show-Invites
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -90,7 +91,7 @@
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
-10. ## Invite-Other-User-To-Workspace
+2.  ## Invite-Other-User-To-Workspace
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -99,7 +100,7 @@
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
-10. ## Kick-Other-User-From-Workspace
+3.  ## Kick-Other-User-From-Workspace
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -108,7 +109,7 @@
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
-10. ## Change-Other-User-Role-In-Workspace
+4.  ## Change-Other-User-Role-In-Workspace
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -117,7 +118,7 @@
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
-11. ## Change-Invite-status
+5.  ## Change-Invite-status
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -126,7 +127,7 @@
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
-12. ## Show-Invites
+6. ## Accept-Invite
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -135,7 +136,16 @@
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
-13. ## Change-Workspace-Name-Or-Image
+7. ## Reject-Invite
+    - Method: ``
+    - Serializer: ``
+    - Functionality: ``
+    - Authentication: ``
+    - Authorization: ``
+    - URL: ``
+    - Notes: `No Notes`
+    - status: `coming soon...`
+8. ## Cancel-Invite
     - Method: ``
     - Serializer: ``
     - Functionality: ``
