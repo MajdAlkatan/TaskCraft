@@ -17,7 +17,8 @@ class UserSerializer(serializers.ModelSerializer):
         context={
             "add_user_field": False,
             "add_workspace_field": True,
-        }
+        },
+        required=False
     )
     class Meta:
         model = User
@@ -25,37 +26,25 @@ class UserSerializer(serializers.ModelSerializer):
             'id',
             'fullname',
             'email',
-            'password',
             'image',
             'memberships',
             'created_at',
             'updated_at',
         ]
         extra_kwargs = {
-            'password': {
-                'write_only': True,
-                'required': False, # because here we update and never create
-            },
             'image': {
                 'required': False
             },
             'email': {
                 'read_only': True # user can't change the email specified
-            },
-            'memberships': {
-                'required': False
             }
         }
 
-    def validate_password(self, value):
-        if not value:  # Check for empty string/None
-            raise serializers.ValidationError({'password': 'This field may not be blank (empty).'})
-        if len(value) < 8:
-            raise serializers.ValidationError({'password': 'must be 8 characters or more'})
-        return value
-
     def update(self, instance, validated_data):
-        user_workspaces = validated_data.pop('memberships')
+        if 'workspaces' in validated_data:
+            user_workspaces = validated_data.pop('workspaces')
+        else:
+            user_workspaces = None
         with transaction.atomic():
             instance = super().update(instance, validated_data)
 
@@ -77,12 +66,36 @@ class UserSerializer(serializers.ModelSerializer):
                         Workspace.objects.update(**workspace)
                     # if it is not exist so create the new workspace
                     else:
-                        Workspace.objects.create(**workspace)
+                        Workspace.objects.create(user=instance ,**workspace)
         return instance
 
+class ChangeImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['image']
+        extra_kwargs = {
+            'image': {
+                'required': True
+            }
+        }
 
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True , write_only=True)
+    new_password = serializers.CharField(required=True , write_only=True)
 
-
+    def validate_old_password(self , value):
+        if not value:
+            raise serializers.ValidationError({'old_password': 'This field may not be blank (empty).'})
+        from django.contrib.auth.hashers import check_password
+        if not check_password(value , self.context['request'].user.password):
+            raise serializers.ValidationError({"old_password": "doesn't match the password"})
+        return value
+    def validate_new_password(self, value):
+        if not value:
+            raise serializers.ValidationError({'new_password': 'This field may not be blank (empty).'})
+        if len(value) < 8:
+            raise serializers.ValidationError({'new_password': 'must be 8 characters or more'})
+        return value
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True,required=True,style={'input_type': 'password'})

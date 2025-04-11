@@ -1,5 +1,5 @@
 GET http://127.0.0.1:8000/api/users/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Mjg3MTY4LCJpYXQiOjE3NDQyODM1NjgsImp0aSI6IjBmYjBiYWM0MjNhNzQ0MGQ5YWZlMGUwZGIyYzc1ODAwIiwidXNlcl9pZCI6Mn0.XfLEuet8vdXB1xdY7QrrndC0N38Gc0uEB9MkJk2c94Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Mzk1NTY5LCJpYXQiOjE3NDQzOTE5NjksImp0aSI6IjA1YjAxMDQxNDM3MzQ1NThhMDc0ZDQyNjhjNzRlNGZkIiwidXNlcl9pZCI6Mn0.QdJyvuzVGgTShf8GgAYFAYpmjSvsZD21IvjLZ0R-pGY
 
 ###
 GET http://127.0.0.1:8000/api/users/1/ HTTP/1.1
@@ -35,10 +35,31 @@ Content-Type: application/json
 ###
 PUT http://127.0.0.1:8000/api/users/2/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Mjk3NTAyLCJpYXQiOjE3NDQyOTM5MDIsImp0aSI6ImRlY2RkYzRmM2U4YTRmYzg5N2M5ZDc4NTcyM2JhYjU2IiwidXNlcl9pZCI6Mn0.rHOwOBTs2fvdRv9QN8SoJNY71qN1BwzwdRCJaQ5nIAA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0MzAxMTc4LCJpYXQiOjE3NDQyOTc1NzgsImp0aSI6ImM4ZDczMmNlODJlMzRjZmU4ZTdmMGViN2VjNTI5OTdiIiwidXNlcl9pZCI6Mn0.PDLMEbkl6nnQ-nsDt5lTkO2KeOLIn3LohAanSBtQ-Wk
 
 {
     "fullname": "john-doe"
 }
 
 ###
+PATCH http://127.0.0.1:8000/api/users/change_password/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0MzAzMTkyLCJpYXQiOjE3NDQyOTk1OTIsImp0aSI6ImE1NDc5NDVmNzIzNTQwNmQ4NzZkZTE0YjdmMGY3YjZmIiwidXNlcl9pZCI6Mn0.gk0qswFey7kvPg68-zKboywIGxabzPaCZAXWDaydXi4
+
+{
+    "old_password": "testtest2",
+    "new_password": "testtest"
+}
+
+###
+PATCH http://127.0.0.1:8000/api/users/change_image/ HTTP/1.1
+Content-Type: multipart/form-data;  boundary=MyBoundary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Mzk1NTY5LCJpYXQiOjE3NDQzOTE5NjksImp0aSI6IjA1YjAxMDQxNDM3MzQ1NThhMDc0ZDQyNjhjNzRlNGZkIiwidXNlcl9pZCI6Mn0.QdJyvuzVGgTShf8GgAYFAYpmjSvsZD21IvjLZ0R-pGY
+
+# must send from postman
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="example.jpg"
+Content-Type: image/jpeg
+
+image=< ../../temp_assets/example.jpg
+--MyBoundary
