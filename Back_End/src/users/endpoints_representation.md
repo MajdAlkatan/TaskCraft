@@ -80,7 +80,7 @@
     - Authorization: `normal-user only`
     - URL: `/users/{id}/change_image`
     - Notes: `coming soon ... (till decide how to deal with images)`
-    - status: `coming soon...`
+    - status: `ready`
 9. ## Join-Workspace
     - Method: ``
     - Serializer: ``
