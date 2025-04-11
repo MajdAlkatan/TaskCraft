@@ -71,7 +71,7 @@
     - Authorization: `normal-user only`
     - URL: `/users/{id}/change_password`
     - Notes: `No Notes`
-    - status: `coming soon...`
+    - status: `ready`
 8.  ## Change-User-Image
     - Method: `POST`
     - Serializer: `UserSerializer`

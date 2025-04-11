@@ -1,5 +1,5 @@
 GET http://127.0.0.1:8000/api/users/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Mjg3MTY4LCJpYXQiOjE3NDQyODM1NjgsImp0aSI6IjBmYjBiYWM0MjNhNzQ0MGQ5YWZlMGUwZGIyYzc1ODAwIiwidXNlcl9pZCI6Mn0.XfLEuet8vdXB1xdY7QrrndC0N38Gc0uEB9MkJk2c94Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Mzk1NTY5LCJpYXQiOjE3NDQzOTE5NjksImp0aSI6IjA1YjAxMDQxNDM3MzQ1NThhMDc0ZDQyNjhjNzRlNGZkIiwidXNlcl9pZCI6Mn0.QdJyvuzVGgTShf8GgAYFAYpmjSvsZD21IvjLZ0R-pGY
 
 ###
 GET http://127.0.0.1:8000/api/users/1/ HTTP/1.1
@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
     "email": "j@j.com",
-    "password": "testtest2"
+    "password": "testtest"
 }
 
 ###
@@ -50,3 +50,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
     "old_password": "testtest2",
     "new_password": "testtest"
 }
+
+###
+PATCH http://127.0.0.1:8000/api/users/change_image/ HTTP/1.1
+Content-Type: multipart/form-data;  boundary=MyBoundary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Mzk1NTY5LCJpYXQiOjE3NDQzOTE5NjksImp0aSI6IjA1YjAxMDQxNDM3MzQ1NThhMDc0ZDQyNjhjNzRlNGZkIiwidXNlcl9pZCI6Mn0.QdJyvuzVGgTShf8GgAYFAYpmjSvsZD21IvjLZ0R-pGY
+
+# must send from postman
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="example.jpg"
+Content-Type: image/jpeg
+
+image=< ../../temp_assets/example.jpg
+--MyBoundary

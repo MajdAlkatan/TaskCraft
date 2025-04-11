@@ -32,13 +32,17 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(fullname , email , password , **extra_fields)
 
 
-
+def user_image_upload_path(instance, filename):
+    if not instance.id:
+        # Handle case where instance isn't saved yet
+        return f'Users/temp/{filename}'
+    return f'Users/{instance.id}/{filename}'
 class User(AbstractBaseUser , PermissionsMixin , TimeStampedModel):
     class Meta:
         db_table = 'users'
     fullname = models.CharField(max_length=100 , unique=True)
     email = models.EmailField(unique=True)
-    image = models.ImageField(null=True,blank=True , upload_to=f'Users/{id}/') #TODO put default photo
+    image = models.ImageField(null=True,blank=True , upload_to=user_image_upload_path) #TODO put default photo
     
     #TODO Tasks (if needed)
 

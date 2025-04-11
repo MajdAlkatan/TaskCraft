@@ -7,7 +7,12 @@ from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import User
-from .serializers import UserSerializer , RegisterSerializer , ChangePasswordSerializer
+from .serializers import (
+    UserSerializer,
+    RegisterSerializer,
+    ChangePasswordSerializer,
+    ChangeImageSerializer
+)
 # Create your views here.
 
 import logging
@@ -33,9 +38,13 @@ class UserViewSet(viewsets.ModelViewSet):
             # normal user can view and update only his own info
         return qs
 
-    @action(detail=True , methods=['patch'])
+    @action(detail=False , methods=['patch'] , serializer_class=ChangeImageSerializer)
     def change_image(self , request):
-        pass #TODO
+        serializer = self.get_serializer(request.user , data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
 
     # Here We put 'detail-False' because even admin shouldn't be able to change users passwords for security reasons
     @action(detail=False , methods=['patch'] , serializer_class=ChangePasswordSerializer)

@@ -69,6 +69,15 @@ class UserSerializer(serializers.ModelSerializer):
                         Workspace.objects.create(user=instance ,**workspace)
         return instance
 
+class ChangeImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['image']
+        extra_kwargs = {
+            'image': {
+                'required': True
+            }
+        }
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True , write_only=True)
@@ -88,7 +97,6 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError({'new_password': 'must be 8 characters or more'})
         return value
 
-    
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True,required=True,style={'input_type': 'password'})
     
