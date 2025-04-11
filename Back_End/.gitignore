@@ -30,3 +30,6 @@ Thumbs.db
 *.egg-info/
 dist/
 build/
+
+#own
+My-TODO.txt
