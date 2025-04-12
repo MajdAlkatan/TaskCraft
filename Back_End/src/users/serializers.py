@@ -120,6 +120,12 @@ class RegisterSerializer(serializers.ModelSerializer):
                     owner=user
                 )
 
+                Users_Workspaces.objects.create(
+                    user=user,
+                    workspace=default_workspace,
+                    user_role='owner'
+                )
+
             return user
         except KeyError as e:
             raise serializers.ValidationError(f'{str(e)}: this field is required !')

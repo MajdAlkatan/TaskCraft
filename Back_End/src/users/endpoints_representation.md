@@ -98,7 +98,7 @@
     - Authentication: ``
     - Authorization: ``
     - URL: ``
-    - Notes: `No Notes`
+    - Notes: `admin/user can't put owner user_role to any other user`
     - status: `coming soon...`
 3.  ## Kick-Other-User-From-Workspace
     - Method: ``
@@ -116,7 +116,7 @@
     - Authentication: ``
     - Authorization: ``
     - URL: ``
-    - Notes: `No Notes`
+    - Notes: `admin/user can't put owner user_role to any other user`
     - status: `coming soon...`
 5.  ## Change-Invite-status
     - Method: ``
