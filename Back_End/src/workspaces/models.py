@@ -30,6 +30,7 @@ class Users_Workspaces(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE , related_name='memberships')
     workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , related_name='members')
     class User_Role(models.TextChoices):
+        OWNER = 'owner' , 'Owner'
         PARTNER = 'partner' , 'Partner'
         CAN_EDIT = 'can_edit' , 'Can Edit'
         CAN_VIEW = 'can_view' , 'Can View'
