@@ -37,36 +37,14 @@ class UserSerializer(serializers.ModelSerializer):
             },
             'email': {
                 'read_only': True # user can't change the email specified
+            },
+            'fullname': {
+                'required': True
             }
         }
 
     def update(self, instance, validated_data):
-        if 'workspaces' in validated_data:
-            user_workspaces = validated_data.pop('workspaces')
-        else:
-            user_workspaces = None
-        with transaction.atomic():
-            instance = super().update(instance, validated_data)
-
-            if user_workspaces:
-                # validate required fields
-                try:
-                    if not user_workspaces['id']:
-                        raise serializers.ValidationError({"id" : "this field may not be blank (empty)."})
-                    if not user_workspaces['name']:
-                        raise serializers.ValidationError({"name" : "this field may not be blank (empty)."})
-                except KeyError as e:
-                    raise serializers.ValidationError({f"{str(e)}": "this field is required!"})
-                # processing the workspaces data
-                for workspace in user_workspaces:
-                    # check if the workspace exists
-                    existed_ws = Workspace.objects.get(pk=workspace.id)
-                    # if it is exist so update it
-                    if existed_ws:
-                        Workspace.objects.update(**workspace)
-                    # if it is not exist so create the new workspace
-                    else:
-                        Workspace.objects.create(user=instance ,**workspace)
+        instance = super().update(instance, validated_data)
         return instance
 
 class ChangeImageSerializer(serializers.ModelSerializer):
