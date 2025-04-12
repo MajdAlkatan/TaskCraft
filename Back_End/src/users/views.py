@@ -1,10 +1,12 @@
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets , status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import filters
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import User
@@ -14,6 +16,7 @@ from .serializers import (
     ChangePasswordSerializer,
     ChangeImageSerializer
 )
+from .filters import UserFilter
 # Create your views here.
 
 import logging
@@ -29,6 +32,15 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class.page_size=50
     pagination_class.max_page_size=120
     pagination_class.page_size_query_param='size'
+    # filtering/searching/ordering
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    filterset_class = UserFilter
+    search_fields = ['fullname', 'email']
+    ordering_fields = ['fullname', 'email', 'created_at', 'updated_at']
     
     def get_permissions(self):
         self.permission_classes = [IsAuthenticated]

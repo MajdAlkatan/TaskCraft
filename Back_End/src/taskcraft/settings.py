@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'dotenv',
     'django_extensions',
     'corsheaders',
+    'django_filters',
 
     #own
     'users',
