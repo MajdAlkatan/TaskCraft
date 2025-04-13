@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Card from "../../Components/Card/Card";
 import Sidebar from './Section/SideBar/SideBar';
 import Header from './Section/Header/Header';
@@ -6,11 +6,22 @@ import { FaList, FaPlus } from 'react-icons/fa';
 import Statistics from "../../Components/Statistics/Statistics";
 import "./DashBoard.css";
 import WelcomeBack from './Section/WelcomeBack/WelcomeBack';
+import Invite from './Section/Invite/Invite';
 
 function DashBoard() {
+    const [isInviteOpen, setInviteOpen] = useState(false); // State to manage dialog visibility
+    const handleInviteClick = () => {
+        setInviteOpen(true); // Open the invite dialog
+    };
+
+    const handleCloseInvite = () => {
+        setInviteOpen(false); // Close the invite dialog
+    };
+
     return (
         <div className='dashboard'>
-            <WelcomeBack />
+            <WelcomeBack onInviteClick={handleInviteClick} />
+            {isInviteOpen && <Invite onClose={handleCloseInvite} />}
             <div className="main-workspace">
                 <div className="To-Do">
                     <div className="up">

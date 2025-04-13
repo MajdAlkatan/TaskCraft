@@ -1,0 +1,86 @@
+# How To Use Filtering
+## Filtering in general:
+filtering means to filter the response data duo to some field.
+you can use filtering just in GET requests and specially in Listing apis.
+
+## How To Use it:
+### general usage:
+Example:
+
+```http
+http://127.0.0.1:8000/api/users/?fullname=marouf
+```
+
+Simply, this will filter the results to just the result which is have fullname of 'marouf' exactly.
+and by exactly I mean this ``` Marouf ``` will not be returned!
+
+---
+### using __ to customize requirements:
+#### __iexact:
+
+the previous example was actually the usage of '__exact'.
+So it is clear that by using '__iexact' you tell the server to not discipline with the small-or-capital letters.
+that means this:
+
+```http
+http://127.0.0.1:8000/api/users/?fullname__iexact=marouf
+```
+
+will give you ``` Marouf ``` but if the fullname is something like this ``` sMaroufs ```, it will not be included in the results!
+because '__iexact' doesn't mean to include the results that contains the required string!
+
+---
+#### __contains:
+this solves the '__iexact' problem, it is clear from the name that '__contains' return the results that contains the required string.
+
+that means this:
+
+```http
+http://127.0.0.1:8000/api/users/?fullname__contains=marouf
+```
+
+will give you ``` smaroufs ``` but of-course not ``` sMaroufs ``` !.
+because as you expected there is an '__icontains'!
+
+---
+#### __icontains:
+Example:
+
+```http
+http://127.0.0.1:8000/api/users/?fullname__contains=marouf
+```
+
+this will give you ``` smaroufs ``` and ``` sMaroufs ``` as well.
+
+---
+#### numeric fields
+#### __lt:
+less-than, Example:
+
+```http
+http://127.0.0.1:8000/api/users/?created_at__lt=2025-04-11
+```
+
+---
+#### __gt:
+greater-than, Example:
+
+```http
+http://127.0.0.1:8000/api/users/?created_at__gt=2025-04-11
+```
+
+---
+#### __range:
+in-range, Example:
+
+```http
+http://127.0.0.1:8000/api/users/?created_at__range=2025-04-11,2025-04-13
+```
+
+---
+## Important Notes:
+Not all the __ methods I mentioned will be available for all fields.
+
+Each field has his own available methods.
+
+For example, fullname may has iexact and icontains only, that means if you used exact or contains the filter will not work and the results will return to you with no filter applied to it.

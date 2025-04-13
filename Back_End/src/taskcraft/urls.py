@@ -20,6 +20,9 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 api_patterns = [
     path('users/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -36,3 +39,8 @@ urlpatterns = [
     path('api/' , include(api_patterns)),
 
 ]
+
+urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
