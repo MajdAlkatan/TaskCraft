@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     #own
     'users',
     'workspaces',
+    'tasks',
 ]
 
 MIDDLEWARE = [

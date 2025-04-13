@@ -26,10 +26,13 @@ api_patterns = [
     path('users/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('' , include('workspaces.urls')),
     path('', include('users.urls')),
+    path('', include('tasks.urls')),
+
 ]
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/' , include(api_patterns))
+    path('api/' , include(api_patterns)),
+
 ]
