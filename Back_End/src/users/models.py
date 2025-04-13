@@ -44,7 +44,7 @@ class User(AbstractBaseUser , PermissionsMixin , TimeStampedModel):
     email = models.EmailField(unique=True)
     image = models.ImageField( 
         upload_to=user_image_upload_path,
-        default="defaults\user\default.png"
+        default="defaults/user/default.png"
     )
 
     is_staff = models.BooleanField(default=False)
