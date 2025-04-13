@@ -1,0 +1,154 @@
+
+############# Tasks  ###################
+
+GET http://127.0.0.1:8000/api/tasks/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc2NTc5LCJpYXQiOjE3NDQ1NzI5NzksImp0aSI6IjVkMmViMmIyYzg5ODRiMGU5ZTc2NThhNzA0MGIyNDE1IiwidXNlcl9pZCI6MX0.9huCqHQ_BfvqatYIVeNRNi-BZttWG799BioXVSIN88Q
+
+###
+
+POST http://127.0.0.1:8000/api/tasks/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc2NTc5LCJpYXQiOjE3NDQ1NzI5NzksImp0aSI6IjVkMmViMmIyYzg5ODRiMGU5ZTc2NThhNzA0MGIyNDE1IiwidXNlcl9pZCI6MX0.9huCqHQ_BfvqatYIVeNRNi-BZttWG799BioXVSIN88Q
+Content-Type: application/json
+
+{
+    "title": "Task 1",
+    "description": "description for task 1",
+    "start_date": "2025-04-12",
+    "owner": 1,
+    "items": [
+        {
+            "task_category": 2,
+            "category_option": 1
+        }
+    ]
+
+}
+
+###
+
+GET http://127.0.0.1:8000/api/tasks/2/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc2NTc5LCJpYXQiOjE3NDQ1NzI5NzksImp0aSI6IjVkMmViMmIyYzg5ODRiMGU5ZTc2NThhNzA0MGIyNDE1IiwidXNlcl9pZCI6MX0.9huCqHQ_BfvqatYIVeNRNi-BZttWG799BioXVSIN88Q
+
+###
+
+PATCH  http://127.0.0.1:8000/api/tasks/2/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc2NTc5LCJpYXQiOjE3NDQ1NzI5NzksImp0aSI6IjVkMmViMmIyYzg5ODRiMGU5ZTc2NThhNzA0MGIyNDE1IiwidXNlcl9pZCI6MX0.9huCqHQ_BfvqatYIVeNRNi-BZttWG799BioXVSIN88Q
+Content-Type: application/json
+
+{
+    "title": "Task 1 Edited"
+}
+
+###
+
+PUT  http://127.0.0.1:8000/api/tasks/2/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc2NTc5LCJpYXQiOjE3NDQ1NzI5NzksImp0aSI6IjVkMmViMmIyYzg5ODRiMGU5ZTc2NThhNzA0MGIyNDE1IiwidXNlcl9pZCI6MX0.9huCqHQ_BfvqatYIVeNRNi-BZttWG799BioXVSIN88Q
+Content-Type: application/json
+
+{
+    "title": "Task 1 Edited",
+    "description": "description for task 1 Edited",
+    "start_date": "2025-04-12",
+    "owner": 1,
+    "items": [
+        {
+            "task_category": 2,
+            "category_option": 1
+        }
+    ]
+}
+
+###
+
+DELETE http://127.0.0.1:8000/api/tasks/1/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc2NTc5LCJpYXQiOjE3NDQ1NzI5NzksImp0aSI6IjVkMmViMmIyYzg5ODRiMGU5ZTc2NThhNzA0MGIyNDE1IiwidXNlcl9pZCI6MX0.9huCqHQ_BfvqatYIVeNRNi-BZttWG799BioXVSIN88Q
+
+##TODO
+
+
+
+
+############# Category_Options ###################
+
+GET http://127.0.0.1:8000/api/category_options/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+
+###
+
+POST http://127.0.0.1:8000/api/category_options/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+Content-Type: application/json
+
+{
+    "name": "Hard",
+    "task_category": 2
+}
+
+
+###
+
+PUT http://127.0.0.1:8000/api/category_options/1/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+Content-Type: application/json
+
+{
+    "name": "Hard1",
+    "task_category": 2
+}
+
+
+###
+
+
+GET http://127.0.0.1:8000/api/category_options/1/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+
+
+###
+
+DELETE http://127.0.0.1:8000/api/category_options/3/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+
+
+
+
+############# Task_Categories ###################
+
+
+
+GET http://127.0.0.1:8000/api/task_categories/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc0NzU5LCJpYXQiOjE3NDQ1NzExNTksImp0aSI6IjAyNTJiOTc4YjAyYjRhNjc4YzBjMmIyYTdkNDRmOGRjIiwidXNlcl9pZCI6Mn0.NeugK-Q1Gg2cOLXPjWOGjXxWMDufpUQMRk3WD-V4kuM
+
+
+###
+
+
+POST http://127.0.0.1:8000/api/task_categories/ HTTP/1.1
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+Content-Type: application/json
+
+{
+    "name": "Category 1"
+}
+
+###
+
+GET http://127.0.0.1:8000/api/task_categories/2/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc0NzU5LCJpYXQiOjE3NDQ1NzExNTksImp0aSI6IjAyNTJiOTc4YjAyYjRhNjc4YzBjMmIyYTdkNDRmOGRjIiwidXNlcl9pZCI6Mn0.NeugK-Q1Gg2cOLXPjWOGjXxWMDufpUQMRk3WD-V4kuM
+
+###
+
+PUT http://127.0.0.1:8000/api/task_categories/1/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+Content-Type: application/json
+
+{
+    "name": "Category 1 e"
+}
+
+
+###
+
+DELETE http://127.0.0.1:8000/api/task_categories/1/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+
