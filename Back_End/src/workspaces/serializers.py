@@ -49,13 +49,14 @@ class WorkspaceSerializer(serializers.ModelSerializer):
                 'updated_at',
             ]
     
-    owner = LocalUserSerializer(read_only=True)
+    owner = LocalUserSerializer(required=False)
     members = MembershipSerializer(
         many=True,
         context={
             "add_user_field": True,
             "add_workspace_field": False,
-        }
+        },
+        read_only=True
     )
     class Meta:
         model = Workspace
@@ -68,6 +69,11 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
         ]
+        extra_kwargs={
+            'image': {
+                'required': False
+            },
+        }
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

@@ -10,6 +10,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
+from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
+
+from users.permissions import IsClient
 
 from .models import Workspace
 from .serializers import WorkspaceSerializer
@@ -20,6 +23,7 @@ from .filters import WorkspaceFilter
 class WorkspaceViewSet(viewsets.ModelViewSet):
     queryset = Workspace.objects.all()
     serializer_class = WorkspaceSerializer
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
     # Pagination
     pagination_class = PageNumberPagination
     pagination_class.page_size=50
@@ -35,6 +39,11 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     search_fields = ['name']
     ordering_fields = ['name', 'created_at', 'updated_at']
 
+    def get_permissions(self):
+        if self.action == 'create':
+            self.permission_classes = [IsClient, IsAuthenticated]
+        return super().get_permissions()
+
     def get_queryset(self):
         qs = super().get_queryset()
         if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
@@ -47,12 +56,12 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+    
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
     def create(self, request, *args, **kwargs):
-        return Response(
-            'method not allowed',
-            status.HTTP_405_METHOD_NOT_ALLOWED
-        )
-        # return super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
+    
     def update(self, request, *args, **kwargs):
         return Response(
             'method not allowed',

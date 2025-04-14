@@ -31,8 +31,8 @@
     - Method: `POST`
     - Serializer: `WorkspaceSerializer`
     - Functionality: `simply creating the workspace with name and image for authenticated user (or specific user if authenticated admin)`
-    - Authentication: `required`
-    - Authorization: `admin/normal-user`
+    - Authentication: `require client + Authorization_Header`
+    - Authorization: `normal-user`
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
