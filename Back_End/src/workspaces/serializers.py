@@ -4,6 +4,7 @@ from .models import Workspace , Users_Workspaces , Invite
 
 # from src.Users.serializer import UserSerializer
 from users.models import User
+# from users.serializers import UserSerializer
 
 
 class InviteSerializer(serializers.ModelSerializer):
@@ -36,13 +37,26 @@ class MembershipSerializer(serializers.ModelSerializer):
             self.fields['workspace'] = serializers.PrimaryKeyRelatedField(read_only=True)
 
 class WorkspaceSerializer(serializers.ModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    class LocalUserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields=[
+                'id',
+                'fullname',
+                'email',
+                'image',
+                'created_at',
+                'updated_at',
+            ]
+    
+    owner = LocalUserSerializer(required=False)
     members = MembershipSerializer(
         many=True,
         context={
             "add_user_field": True,
             "add_workspace_field": False,
-        }
+        },
+        read_only=True
     )
     class Meta:
         model = Workspace
@@ -53,5 +67,21 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             'owner',
             'members',
             'created_at',
-            'updated_at,'
+            'updated_at',
         ]
+        extra_kwargs={
+            'image': {
+                'required': False
+            },
+        }
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # print(f'\ndata[members]: {data['members']}\n')
+        filtered_members = []
+        for member in data['members']:
+            # print(f'\nmember: {member}\n')
+            if member.get('user_role') != 'owner':
+                filtered_members.append(member)
+        data['members'] = filtered_members
+        return data

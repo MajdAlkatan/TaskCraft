@@ -45,15 +45,6 @@ class UserViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         self.permission_classes = [IsClient]
-        if self.action == 'retrieve':
-            pass # currently no admin in our application
-            
-            # self.permission_classes = [IsAdminUser]
-
-            # this means only admin can retrieve specific user info,
-            # while normal user can access his own info by /users/ (list){because it will list just his own profile}
-        if self.action == 'register':
-            self.permission_classes = [IsClient]
         if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
             if not self.request.user.is_staff:
                 self.permission_classes = [IsClient , IsAuthenticated]
