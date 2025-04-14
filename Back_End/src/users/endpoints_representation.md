@@ -55,14 +55,14 @@
     - Notes: `send 'refresh = (refresh token)' in the request | the response will return with a new access token`
     - status: `ready`
 6.  ## Update-User-Profile-Info
-    - Method: `PUT/PATCH`
+    - Method: `PATCH`
     - Serializer: `UserSerializer`
     - Functionality: `update the user fields except the password and the image fields (fullname/workspaces)| if there is workspaces in the request will be added and if any workspace already exist it will be updated with the new values`
     - Authentication: `required`
     - Authorization: `normal-user / admin`
     - URL: `/users/{id}`
     - Notes: `No Notes`
-    - status: `coming soon...`
+    - status: `ready`
 7.  ## Change-User-Password
     - Method: `POST`
     - Serializer: `ChangePasswordSerializer`

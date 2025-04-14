@@ -1,8 +1,6 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.contrib.auth.models import BaseUserManager , AbstractBaseUser , PermissionsMixin
+from django.contrib.auth.hashers import make_password, check_password
 
 from django.core.exceptions import ValidationError
 
@@ -68,3 +66,15 @@ class User(AbstractBaseUser , PermissionsMixin , TimeStampedModel):
         return self.fullname
     
 
+
+class Client(TimeStampedModel):
+    class Meta:
+        db_table = 'clients'
+    
+    username = models.CharField(max_length=255 , unique=True)
+    secret = models.CharField(unique=True, max_length=255) # the sha256 needs just a 128 length
+
+    def save(self , *args , **kwargs):
+        if not self.id:
+            self.secret = make_password(self.secret)
+        super().save( *args , **kwargs)

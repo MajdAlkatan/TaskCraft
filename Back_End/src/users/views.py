@@ -17,6 +17,7 @@ from .serializers import (
     ChangeImageSerializer
 )
 from .filters import UserFilter
+from .permissions import IsClient
 # Create your views here.
 
 import logging
@@ -43,7 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
     ordering_fields = ['fullname', 'email', 'created_at', 'updated_at']
     
     def get_permissions(self):
-        self.permission_classes = [AllowAny]
+        self.permission_classes = [IsClient]
         if self.action == 'retrieve':
             pass # currently no admin in our application
             
@@ -52,10 +53,10 @@ class UserViewSet(viewsets.ModelViewSet):
             # this means only admin can retrieve specific user info,
             # while normal user can access his own info by /users/ (list){because it will list just his own profile}
         if self.action == 'register':
-            self.permission_classes = [AllowAny]
+            self.permission_classes = [IsClient]
         if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
             if not self.request.user.is_staff:
-                self.permission_classes = [IsAuthenticated]
+                self.permission_classes = [IsClient , IsAuthenticated]
         return super().get_permissions()
     def get_queryset(self):
         qs = super().get_queryset()
