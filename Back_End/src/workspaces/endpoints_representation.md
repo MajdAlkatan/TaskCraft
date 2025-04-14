@@ -8,7 +8,7 @@
     - Notes: `No Notes`
     - status: `coming soon...` -->
 
-# Workspace End-Points representation 
+# Workspace End-Points representation
 1. ## Get-Workspace-info
     - Method: `GET`
     - Serializer: `WorkspaceSerializer`
@@ -45,7 +45,16 @@
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
-5. ## Show-Workspace-Members
+5. ## Get-User-Workspaces
+    - Method: `GET`
+    - Serializer: `WorkspaceSerializer`
+    - Functionality: `just getting the workspaces belongs to user_id`
+    - Authentication: `required`
+    - Authorization: `normal-user can get his own workspaces info`
+    - URL: ``
+    - Notes: `No Notes`
+    - status: `coming soon...`
+6. ## Show-Workspace-Members
     - Method: ``
     - Serializer: ``
     - Functionality: ``
@@ -54,7 +63,7 @@
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
-6. ## Get-Workspace-Owner
+7. ## Get-Workspace-Owner
     - Method: ``
     - Serializer: ``
     - Functionality: ``
