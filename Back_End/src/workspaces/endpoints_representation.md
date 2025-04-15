@@ -17,7 +17,7 @@
     - Authorization: `admin can get any workspace info | normal-user can just get his own workspace info`
     - URL: ``
     - Notes: `No Notes`
-    - status: `coming soon...`
+    - status: `ready`
 2. ## Get-All-Workspaces
     - Method: `GET`
     - Serializer: `WorkspaceSerializer`
@@ -26,7 +26,7 @@
     - Authorization: `admin can get all workspaces info | normal-user can get only his own workspaces info`
     - URL: ``
     - Notes: `this endpoint can support filtering/searching/ordering`
-    - status: `coming soon...`
+    - status: `ready`
 3. ## Create-Workspace
     - Method: `POST`
     - Serializer: `WorkspaceSerializer`
@@ -35,7 +35,7 @@
     - Authorization: `normal-user`
     - URL: ``
     - Notes: `No Notes`
-    - status: `coming soon...`
+    - status: `ready`
 4. ## Change-Workspace-Name-Or-Image
     - Method: `PATCH`
     - Serializer: `WorkspaceSerializer`
