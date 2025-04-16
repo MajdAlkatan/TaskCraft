@@ -75,6 +75,14 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             },
         }
 
+    def update(self, instance, validated_data):
+        if not Users_Workspaces.objects.filter(
+            workspace=instance.id,
+            user=self.context['request'].user,
+            user_role='owner').exists:
+            raise serializers.ValidationError('the user authenticated isn\'t the owner of the workspace')
+        return super().update(instance, validated_data)
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         # print(f'\ndata[members]: {data['members']}\n')

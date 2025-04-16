@@ -40,7 +40,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     ordering_fields = ['name', 'created_at', 'updated_at']
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update':
             self.permission_classes = [IsClient, IsAuthenticated]
         return super().get_permissions()
 
