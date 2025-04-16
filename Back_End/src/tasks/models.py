@@ -4,6 +4,12 @@ from workspaces.models import Workspace
 from tools.tools import TimeStampedModel
 
 
+def user_image_upload_path(instance, filename):
+    if not instance.id:
+        # Handle case where instance isn't saved yet
+        return f'Tasks/temp/{filename}'
+    return f'Tasks/{instance.id}/{filename}'
+
 class Task(TimeStampedModel):
     class Meta:
         app_label = "tasks"
@@ -12,8 +18,8 @@ class Task(TimeStampedModel):
     description = models.CharField(max_length=2000 , default= "There is no description")
     start_date = models.DateField(auto_now_add=False)
     owner = models.ForeignKey(User , on_delete=models.CASCADE)
-    # workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE)
-    image = models.ImageField(null=True,blank=True , upload_to=f'tasks/{id}/')
+    workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , default=)
+    image = models.ImageField(null=True,blank=True , upload_to=user_image_upload_path , default="defaults/task/task.png")
     users = models.ManyToManyField(
         User,
         through="users_tasks" ,
@@ -50,7 +56,7 @@ class Category_Option(TimeStampedModel):
         app_label = 'tasks'
         db_table = 'category_options'
     name = models.CharField(max_length=20)
-    task_category  = models.ForeignKey(Task_Category , on_delete=models.CASCADE , related_name='options')
+    # task_category  = models.ForeignKey(Task_Category , on_delete=models.CASCADE , related_name='options')
     tasks = models.ManyToManyField(
         Task,
         through="tasks_task_categories" ,
@@ -67,3 +73,11 @@ class tasks_task_categories(models.Model):
     task_category = models.ForeignKey(Task_Category , name = 'task_category' , on_delete=models.CASCADE)
     category_option = models.ForeignKey(Category_Option , name = 'category_option' , on_delete=models.CASCADE)
  
+
+
+class workspace_category_option(models.Model):
+    class Meta:
+        db_table = "workspace_category_option"
+    workspace = models.ForeignKey(Workspace , on_delete = models.CASCADE)
+    task_category = models.ForeignKey(Task_Category , on_delete = models.CASCADE , related_name = 'options')
+    category_option = models.ForeignKey(Category_Option , on_delete = models.CASCADE)

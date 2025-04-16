@@ -2,8 +2,7 @@
 ############# Tasks  ###################
 
 GET http://127.0.0.1:8000/api/tasks/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc2NTc5LCJpYXQiOjE3NDQ1NzI5NzksImp0aSI6IjVkMmViMmIyYzg5ODRiMGU5ZTc2NThhNzA0MGIyNDE1IiwidXNlcl9pZCI6MX0.9huCqHQ_BfvqatYIVeNRNi-BZttWG799BioXVSIN88Q
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NjUxMTg3LCJpYXQiOjE3NDQ2NDc1ODcsImp0aSI6IjE3YmIxM2NjMzE0NDQ0Njg5OTY0ZWQwNTVhZWM3ZjcwIiwidXNlcl9pZCI6MX0.A1CeI6DzW37-KQLq7mZ6AVZNqe84ds8EFjojiR-62EU
 ###
 
 POST http://127.0.0.1:8000/api/tasks/ HTTP/1.1
@@ -117,7 +116,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 
 GET http://127.0.0.1:8000/api/task_categories/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc0NzU5LCJpYXQiOjE3NDQ1NzExNTksImp0aSI6IjAyNTJiOTc4YjAyYjRhNjc4YzBjMmIyYTdkNDRmOGRjIiwidXNlcl9pZCI6Mn0.NeugK-Q1Gg2cOLXPjWOGjXxWMDufpUQMRk3WD-V4kuM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Nzk0NjA3LCJpYXQiOjE3NDQ3OTEwMDcsImp0aSI6IjNmNjZiODY4NjdkMjQ0NmQ4ZDQzNGI3YzgyNzFhNjMyIiwidXNlcl9pZCI6MX0.zh4HsyenDaasizTssrBLuindq-VskkMGpD1FHAcKsko
 
 
 ###
