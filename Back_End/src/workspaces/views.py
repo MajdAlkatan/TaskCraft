@@ -40,7 +40,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     ordering_fields = ['name', 'created_at', 'updated_at']
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update':
             self.permission_classes = [IsClient, IsAuthenticated]
         return super().get_permissions()
 
@@ -52,25 +52,27 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
                 # normal user can view and update only his own info
         return qs
 
+    # Read
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
     
+    # Create
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
     
+    # Update
     def update(self, request, *args, **kwargs):
-        return Response(
-            'method not allowed',
-            status.HTTP_405_METHOD_NOT_ALLOWED
-        )
-        # return super().update(request, *args, **kwargs)
+        return super().update(request, *args, **kwargs)
     def partial_update(self, request, *args, **kwargs):
-        return Response(
-            'method not allowed',
-            status.HTTP_405_METHOD_NOT_ALLOWED
-        )
-        # return super().partial_update(request, *args, **kwargs)
+        """
+        request:
+            {
+                "name": "new workspace name",
+                "image": file[workspace-image.jpg]
+            }
+        """
+        return super().partial_update(request, *args, **kwargs)

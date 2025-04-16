@@ -7,11 +7,20 @@ from tools.tools import TimeStampedModel #auto insert the created_at & updated_a
 from users.models import User
 
 # Create your models here.
+def workspace_image_upload_path(instance , filename):
+    if not instance.id:
+        # Handle case where instance isn't saved yet
+        return f'Workspaces/temp/{filename}'
+    return f'Workspaces/{instance.id}/{filename}'
 class Workspace(TimeStampedModel):
     class Meta:
         db_table = 'workspaces'
     name = models.CharField(max_length=255)
-    image = models.ImageField(null=True,blank=True , upload_to=f'Workspaces/{id}/') #TODO put default photo
+    image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=workspace_image_upload_path
+    ) #TODO put default photo
     owner = models.ForeignKey(User , related_name='own_workspaces' , on_delete=models.CASCADE, null=False, blank=False)
     users = models.ManyToManyField(
         User,
