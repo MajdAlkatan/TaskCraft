@@ -1,6 +1,13 @@
 from rest_framework import serializers
-from .models import Task , users_tasks , Task_Category , Category_Option , tasks_task_categories
+from .models import Task , users_tasks , Task_Category , Category_Option , tasks_task_categories , workspace_category_option
 from django.db import transaction
+
+
+
+class WorkspaceCategoryOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = workspace_category_option
+        fields = ('workspace' , 'task_category' , 'category_option')
 
 class UserTasksSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,13 +31,13 @@ class TasksTaskCategorySerializer(serializers.ModelSerializer):
 class CategoryOptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category_Option
-        fields = ('id' , 'name' , 'task_category')
+        fields = ('id' , 'name' )
         extra_kwargs = {
             'id': {'read_only': True}
         }
 
 class TaskCategorySerializer(serializers.ModelSerializer):
-    options = CategoryOptionSerializer(many = True)
+    options = WorkspaceCategoryOptionSerializer(many = True)
     class Meta:
         model = Task_Category
         fields = ('id' , 'name' , 'options')
@@ -40,7 +47,9 @@ class TaskCategorySerializer(serializers.ModelSerializer):
         }
 
 class TaskCategoryCreateSerializer(serializers.ModelSerializer):
+
     options = CategoryOptionSerializer(many = True)
+    # class 
     class Meta:
         model = Task_Category
         fields = ('name' , 'options')
@@ -58,9 +67,14 @@ class TaskSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
             'owner_id',
+            'image',
+            # 'user',
             # 'owner_tasks',
             'items',
         )
+        # extra_kwargs = {
+        #     'image': {'required': False}
+        # }
 
 
 class TaskCreateSerializer(serializers.ModelSerializer):
@@ -78,8 +92,12 @@ class TaskCreateSerializer(serializers.ModelSerializer):
             'description',
             'start_date',
             'owner',
+            'image',
             'items',
         )
+        extra_kwargs = {
+            'image': {'required': False}
+        }
         # extra_kwargs = {
         #     'owner': {'read_only': True}
         # }
@@ -108,3 +126,11 @@ class TaskCreateSerializer(serializers.ModelSerializer):
         return instance
     
     
+
+class ChangeImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['image']
+        extra_kwargs = {
+            'image': {'required': True}
+        }
