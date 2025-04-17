@@ -75,6 +75,12 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             },
         }
 
+    def __init__(self, instance=None, data=..., **kwargs):
+        super().__init__(instance, data, **kwargs)
+        
+        if not self.context.get('add_owner' , True):
+            self.fields.pop('owner')
+
     def create(self, validated_data):
         # ensure user can't create more that 10 workspaces
         user_workspaces = Workspace.objects.filter(owner_id=self.context['request'].user)

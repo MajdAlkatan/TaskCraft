@@ -42,14 +42,18 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'create' or self.action == 'update' or self.action == 'partial_update':
             self.permission_classes = [IsClient, IsAuthenticated]
+        if self.action == 'owned':
+            self.permission_classes.append(IsAuthenticated)
         return super().get_permissions()
 
     def get_queryset(self):
         qs = super().get_queryset()
         if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
             if not self.request.user.is_staff:
-                qs = qs.filter(fullname=self.request.user.fullname)
+                qs = qs.filter(owner=self.request.user)
                 # normal user can view and update only his own info
+        if self.action == 'owned':
+            qs = qs.filter(owner=self.request.user)
         return qs
 
     # Read
@@ -76,3 +80,23 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             }
         """
         return super().partial_update(request, *args, **kwargs)
+    
+    # Get-User-Workspaces
+    @action(detail=False , methods=['get'])
+    def owned(self , request):
+        serializer = self.get_serializer(
+            self.get_queryset(),
+            many=True,
+            context={
+                'add_owner': False
+            }
+        )
+        return Response(
+            data={
+                "user_id": self.request.user.id,
+                "email": self.request.user.email,
+                "fullname": self.request.user.fullname,
+                "workspaces": serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
