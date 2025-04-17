@@ -51,6 +51,8 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        if self.action == 'owner':
+            return qs
         if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
             if not self.request.user.is_staff:
                 qs = qs.filter(owner=self.request.user)
@@ -114,3 +116,9 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             }
         )
         return Response(serializer.data.get('members') , status=status.HTTP_200_OK)
+    
+    @action(detail=True , methods=['get'])
+    def owner(self , request , pk=None):
+        workspace = self.get_object()
+        serializer = self.get_serializer(instance=workspace)
+        return Response(serializer.data.get('owner') , status=status.HTTP_200_OK)
