@@ -51,7 +51,7 @@ class UserViewSet(viewsets.ModelViewSet):
         
         if (self.action == 'create' or self.action == 'destroy'
             or self.action == 'update' or self.action == 'partial_update'
-            or self.action == 'received_invites'):
+            or self.action == 'received_invites' or self.action == 'sent_invites'):
             self.permission_classes.append(IsAuthenticated)
 
         if self.action == 'list':
@@ -132,6 +132,24 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(
             {
                 "receiver_id":request.user.id,
+                "invites":serializer.data
+            },
+            status.HTTP_200_OK
+        )
+
+    @action(detail=False , methods=['get'] , serializer_class=InviteSerializer)
+    def sent_invites(self , request):
+        invites = Invite.objects.filter(sender=request.user , status='pending').all()
+        serializer = self.get_serializer(
+            instance=invites,
+            many=True,
+            context={
+                'remove_sender': True,
+            }
+        )
+        return Response(
+            {
+                "sender_id":request.user.id,
                 "invites":serializer.data
             },
             status.HTTP_200_OK
