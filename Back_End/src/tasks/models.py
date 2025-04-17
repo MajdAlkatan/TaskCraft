@@ -18,7 +18,7 @@ class Task(TimeStampedModel):
     description = models.CharField(max_length=2000 , default= "There is no description")
     start_date = models.DateField(auto_now_add=False)
     owner = models.ForeignKey(User , on_delete=models.CASCADE)
-    workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , default=)
+    # workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , default=)
     image = models.ImageField(null=True,blank=True , upload_to=user_image_upload_path , default="defaults/task/task.png")
     users = models.ManyToManyField(
         User,

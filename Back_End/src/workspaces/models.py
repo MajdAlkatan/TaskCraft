@@ -36,6 +36,7 @@ class Workspace(TimeStampedModel):
 class Users_Workspaces(models.Model):
     class Meta:
         db_table = 'users_workspaces'
+        unique_together= ['user' , 'workspace']
     user = models.ForeignKey(User , on_delete=models.CASCADE , related_name='memberships')
     workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , related_name='members')
     class User_Role(models.TextChoices):

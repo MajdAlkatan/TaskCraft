@@ -14,7 +14,7 @@ from .serializers import (
     UserSerializer,
     RegisterSerializer,
     ChangePasswordSerializer,
-    ChangeImageSerializer
+    ChangeImageSerializer,
 )
 from .filters import UserFilter
 from .permissions import IsClient
