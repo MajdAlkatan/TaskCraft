@@ -13,9 +13,9 @@ from rest_framework import filters
 from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 
 from users.permissions import IsClient
-from .permissions import IsMember
 
-from .models import Workspace
+from .permissions import IsMember
+from .models import Workspace , Users_Workspaces
 from .serializers import WorkspaceSerializer
 from .filters import WorkspaceFilter
 
@@ -42,21 +42,28 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         self.permission_classes = [IsClient]
-        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update' or self.action == 'owned':
+        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy' or self.action == 'owned':
             self.permission_classes.append(IsAuthenticated)
-        if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
-            if not self.request.user.is_staff:
-                self.permission_classes.append(IsAuthenticated, IsMember)
+        if self.action == 'list':
+            if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
+                if not self.request.user.is_staff:
+                    self.permission_classes.append(IsAuthenticated)
+        if self.action == 'retrieve':
+            if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
+                if not self.request.user.is_staff:
+                    self.permission_classes.append(IsAdminUser)
+        if self.action == 'members'  or self.action == 'leave':
+            self.permission_classes.append(IsAuthenticated)
+            self.permission_classes.append(IsMember)
         return super().get_permissions()
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.action == 'owner':
-            return qs
-        if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
-            if not self.request.user.is_staff:
-                qs = qs.filter(owner=self.request.user)
-                # normal user can view and update only his own info
+        if self.action == 'list':
+            if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
+                if not self.request.user.is_staff:
+                    qs = qs.filter(owner=self.request.user)
+                    # normal user can view and update only his own info
         if self.action == 'owned':
             qs = qs.filter(owner=self.request.user)
         return qs
@@ -86,6 +93,10 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         """
         return super().partial_update(request, *args, **kwargs)
     
+    # Delete
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
     # Get-User-Workspaces
     @action(detail=False , methods=['get'])
     def owned(self , request):
@@ -122,3 +133,16 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         workspace = self.get_object()
         serializer = self.get_serializer(instance=workspace)
         return Response(serializer.data.get('owner') , status=status.HTTP_200_OK)
+    
+    @action(detail=True , methods=['delete'])
+    def leave(self , request , pk):
+        workspace = self.get_object()
+        if workspace.owner == request.user:
+            return Response({"message" : "user that wants to leave workspace is the owner !"} , status.HTTP_400_BAD_REQUEST)
+        membership = Users_Workspaces.objects.filter(user=request.user,workspace=workspace)
+        if not membership.exists():
+            return Response({"message" : "user that wants to leave workspace is already not member !"} , status.HTTP_400_BAD_REQUEST)
+        membership = membership.get()
+        membership.delete()
+        #TODO: Must delete all tasks he created or he was contributing in @Ai_Almusfi
+        return Response(None , status.HTTP_204_NO_CONTENT)

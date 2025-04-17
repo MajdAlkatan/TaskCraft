@@ -15,10 +15,13 @@ class IsMember(permissions.BasePermission):
     message = 'Authenticated User Is Not Member In The Required Workspace!'
 
     def has_permission(self, request, view):
-        workspace = Workspace.objects.filter(id=view.pk)
-        if Users_Workspaces.objects.filter(user=request.user, workspace=workspace).exists():
-            return True
-        return False
+        workspace_id = view.kwargs.get('pk')
+        
+        workspace = Workspace.objects.filter(id=workspace_id)
+        return Users_Workspaces.objects.filter(
+            user=request.user,
+            workspace_id=workspace_id
+        ).exists()
     
 class CanEdit(permissions.BasePermission):
     message = 'Authenticated User Can\'t Edit In The Required Workspace!'
