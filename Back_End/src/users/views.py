@@ -9,6 +9,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from workspaces.models import Invite
+from workspaces.serializers import InviteSerializer
+
 from .models import User
 from .serializers import (
     UserSerializer,
@@ -45,16 +48,31 @@ class UserViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         self.permission_classes = [IsClient]
-        if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
-            if not self.request.user.is_staff:
-                self.permission_classes = [IsClient , IsAuthenticated]
+        
+        if (self.action == 'create' or self.action == 'destroy'
+            or self.action == 'update' or self.action == 'partial_update'
+            or self.action == 'received_invites'):
+            self.permission_classes.append(IsAuthenticated)
+
+        if self.action == 'list':
+            if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
+                if not self.request.user.is_staff:
+                    self.permission_classes.append(IsAuthenticated)
+       
+        if self.action == 'retrieve':
+            if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
+                if not self.request.user.is_staff:
+                    self.permission_classes.append(IsAdminUser)
         return super().get_permissions()
+    
     def get_queryset(self):
         qs = super().get_queryset()
+        
         if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
             if not self.request.user.is_staff:
                 qs = qs.filter(fullname=self.request.user.fullname)
                 # normal user can view and update only his own info
+        
         return qs
 
     @action(detail=False , methods=['patch'] , serializer_class=ChangeImageSerializer)
@@ -99,3 +117,22 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data , status=status.HTTP_201_CREATED)
         return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False , methods=['get'] , serializer_class=InviteSerializer)
+    def received_invites(self , request):
+        invites = Invite.objects.filter(receiver=request.user , status='pending').all()
+        serializer = self.get_serializer(
+            instance=invites,
+            many=True,
+            context={
+                'remove_receiver': True,
+                'extend_sender': True
+            }
+        )
+        return Response(
+            {
+                "receiver_id":request.user.id,
+                "invites":serializer.data
+            },
+            status.HTTP_200_OK
+        )
