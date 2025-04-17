@@ -14,9 +14,9 @@ from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 
 from users.permissions import IsClient
 
-from .permissions import IsMember
-from .models import Workspace , Users_Workspaces
-from .serializers import WorkspaceSerializer
+from .permissions import IsMember , IsOwner
+from .models import Workspace , Users_Workspaces , Invite
+from .serializers import WorkspaceSerializer , InviteSerializer
 from .filters import WorkspaceFilter
 
 # Create your views here.
@@ -55,6 +55,9 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         if self.action == 'members'  or self.action == 'leave':
             self.permission_classes.append(IsAuthenticated)
             self.permission_classes.append(IsMember)
+        if self.action == 'invite_user':
+            self.permission_classes.append(IsAuthenticated)
+            self.permission_classes.append(IsOwner)
         return super().get_permissions()
 
     def get_queryset(self):
@@ -146,3 +149,20 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         membership.delete()
         #TODO: Must delete all tasks he created or he was contributing in @Ai_Almusfi
         return Response(None , status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True , methods=['post'] , serializer_class=InviteSerializer)
+    def invite_user(self, request , pk):
+        workspace = self.get_object()
+        serializer = self.get_serializer(
+            data={
+                "workspace":pk,
+                "sender":request.user.id,
+                **request.data
+            }
+        )
+
+        if serializer.is_valid():
+            serializer.save(status='pending')
+            return Response(serializer.data , status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)

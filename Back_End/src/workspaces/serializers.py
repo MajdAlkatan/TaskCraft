@@ -6,6 +6,17 @@ from .models import Workspace , Users_Workspaces , Invite
 from users.models import User
 # from users.serializers import UserSerializer
 
+class LocalUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields=[
+            'id',
+            'fullname',
+            'email',
+            'image',
+            'created_at',
+            'updated_at',
+        ]
 
 class InviteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,6 +30,16 @@ class InviteSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         ]
+    
+    def __init__(self, instance=None, data=serializers.empty, **kwargs):
+        super().__init__(instance, data, **kwargs)
+         
+        if self.context.get('remove_receiver' , False):
+            self.fields.pop('receiver')
+        if self.context.get('remove_sender' , False):
+            self.fields.pop('sender')
+        if self.context.get('extend_sender' , False):
+            self.fields['sender'] = LocalUserSerializer(read_only=True)
 
 class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,17 +58,6 @@ class MembershipSerializer(serializers.ModelSerializer):
             self.fields['workspace'] = serializers.PrimaryKeyRelatedField(read_only=True)
 
 class WorkspaceSerializer(serializers.ModelSerializer):
-    class LocalUserSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = User
-            fields=[
-                'id',
-                'fullname',
-                'email',
-                'image',
-                'created_at',
-                'updated_at',
-            ]
     
     owner = LocalUserSerializer(required=False)
     members = MembershipSerializer(
