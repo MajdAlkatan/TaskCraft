@@ -13,6 +13,7 @@ from rest_framework import filters
 from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 
 from users.permissions import IsClient
+from .permissions import IsMember
 
 from .models import Workspace
 from .serializers import WorkspaceSerializer
@@ -40,10 +41,12 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     ordering_fields = ['name', 'created_at', 'updated_at']
 
     def get_permissions(self):
-        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update':
-            self.permission_classes = [IsClient, IsAuthenticated]
-        if self.action == 'owned':
+        self.permission_classes = [IsClient]
+        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update' or self.action == 'owned':
             self.permission_classes.append(IsAuthenticated)
+        if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
+            if not self.request.user.is_staff:
+                self.permission_classes.append(IsAuthenticated, IsMember)
         return super().get_permissions()
 
     def get_queryset(self):
@@ -100,3 +103,14 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+    
+    @action(detail=True , methods=['get'])
+    def members(self , request , pk=None):
+        workspace = self.get_object()
+        serializer = self.get_serializer(
+            instance=workspace,
+            context={
+                'add_owner': False
+            }
+        )
+        return Response(serializer.data.get('members') , status=status.HTTP_200_OK)

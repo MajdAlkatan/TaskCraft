@@ -25,7 +25,7 @@ class MembershipSerializer(serializers.ModelSerializer):
         model = Users_Workspaces
         fields = [
             'id',
-            'user_role'
+            'user_role',
         ]
 
     def __init__(self, instance=None, data=..., **kwargs):
@@ -75,7 +75,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             },
         }
 
-    def __init__(self, instance=None, data=..., **kwargs):
+    def __init__(self, instance=None, data=serializers.empty, **kwargs):
         super().__init__(instance, data, **kwargs)
         
         if not self.context.get('add_owner' , True):

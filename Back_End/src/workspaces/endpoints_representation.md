@@ -54,15 +54,15 @@
     - URL: `/workspaces/owned/`
     - Notes: `No Notes`
     - status: `ready`
-6. ## Show-Workspace-Members
-    - Method: ``
-    - Serializer: ``
-    - Functionality: ``
-    - Authentication: ``
-    - Authorization: ``
-    - URL: ``
+6. ## Get-Workspace-Members
+    - Method: `GET`
+    - Serializer: `WorkspaceSerializer`
+    - Functionality: `getting the workspace members`
+    - Authentication: `required`
+    - Authorization: `client / authenticated user but has to be a member of the required workspace`
+    - URL: `/workspaces/{id}/members/`
     - Notes: `No Notes`
-    - status: `coming soon...`
+    - status: `ready`
 7. ## Get-Workspace-Owner
     - Method: ``
     - Serializer: ``
