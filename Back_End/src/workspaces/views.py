@@ -147,7 +147,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             return Response({"message" : "user that wants to leave workspace is already not member !"} , status.HTTP_400_BAD_REQUEST)
         membership = membership.get()
         membership.delete()
-        #TODO: Must delete all tasks he created or he was contributing in @Ali_Almusfi
+        #TODO: Must delete all tasks he created or he was contributing in. @Ali_Almusfi
         return Response(None , status.HTTP_204_NO_CONTENT)
 
     @action(detail=True , methods=['post'] , serializer_class=InviteSerializer)
@@ -166,3 +166,16 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             return Response(serializer.data , status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True , methods=['delete'])
+    def kick_user(self, request , pk):
+        workspace = self.get_object()
+        if not (workspace.owner == request.user):
+            return Response({"message" : "user that wants to kick users is not the owner !"} , status.HTTP_400_BAD_REQUEST)
+        membership = Users_Workspaces.objects.filter(user=request.data.get('kicked_user'),workspace=workspace)
+        if not membership.exists():
+            return Response({"message" : "user that you want to kick from workspace is already not a member in the specified workspace !"} , status.HTTP_400_BAD_REQUEST)
+        membership = membership.get()
+        membership.delete()
+        #TODO: Must delete all tasks he created or he was contributing in. @Ali_Almusfi
+        return Response(None , status.HTTP_204_NO_CONTENT)
