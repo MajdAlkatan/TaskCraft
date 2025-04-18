@@ -1,9 +1,9 @@
 import React from "react";
 import "./AuthButton.css"; // Import the CSS file
 
-function AuthButton({ text, onClick }) {
+function AuthButton({ text, onClick, type = "button", disabled }) {
   return (
-    <button className="auth-button" onClick={onClick}>
+    <button className="auth-button" onClick={onClick} type={type} disabled={disabled}>
       {text}
     </button>
   );
