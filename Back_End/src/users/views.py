@@ -20,7 +20,7 @@ from .serializers import (
     ChangeImageSerializer,
 )
 from .filters import UserFilter
-from .permissions import IsClient
+# from .permissions import IsClient
 # Create your views here.
 
 import logging
@@ -47,7 +47,7 @@ class UserViewSet(viewsets.ModelViewSet):
     ordering_fields = ['fullname', 'email', 'created_at', 'updated_at']
     
     def get_permissions(self):
-        self.permission_classes = [IsClient]
+        self.permission_classes = [AllowAny]
         
         if (self.action == 'create' or self.action == 'destroy'
             or self.action == 'update' or self.action == 'partial_update'
@@ -118,6 +118,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(serializer.data , status=status.HTTP_201_CREATED)
         return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
     
+    # ------------------------ Invites section ------------------------ #
+
     @action(detail=False , methods=['get'] , serializer_class=InviteSerializer)
     def received_invites(self , request):
         invites = Invite.objects.filter(receiver=request.user , status='pending').all()

@@ -12,7 +12,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
 from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 
-from users.permissions import IsClient
+# from users.permissions import IsClient
 
 from .permissions import IsMember , IsOwner
 from .models import Workspace , Users_Workspaces , Invite
@@ -41,7 +41,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     ordering_fields = ['name', 'created_at', 'updated_at']
 
     def get_permissions(self):
-        self.permission_classes = [IsClient]
+        self.permission_classes = [AllowAny]
         if self.action == 'create' or self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy' or self.action == 'owned':
             self.permission_classes.append(IsAuthenticated)
         if self.action == 'list':

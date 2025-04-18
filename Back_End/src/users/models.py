@@ -67,14 +67,14 @@ class User(AbstractBaseUser , PermissionsMixin , TimeStampedModel):
     
 
 
-class Client(TimeStampedModel):
-    class Meta:
-        db_table = 'clients'
+# class Client(TimeStampedModel):
+#     class Meta:
+#         db_table = 'clients'
     
-    username = models.CharField(max_length=255 , unique=True)
-    secret = models.CharField(unique=True, max_length=255) # the sha256 needs just a 128 length
+#     username = models.CharField(max_length=255 , unique=True)
+#     secret = models.CharField(unique=True, max_length=255) # the sha256 needs just a 128 length
 
-    def save(self , *args , **kwargs):
-        if not self.id:
-            self.secret = make_password(self.secret)
-        super().save( *args , **kwargs)
+#     def save(self , *args , **kwargs):
+#         if not self.id:
+#             self.secret = make_password(self.secret)
+#         super().save( *args , **kwargs)
