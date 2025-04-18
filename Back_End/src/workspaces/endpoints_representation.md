@@ -44,25 +44,25 @@
     - Authorization: `admin/normal-user`
     - URL: ``
     - Notes: `No Notes`
-    - status: `coming soon...`
+    - status: `ready`
 5. ## Get-User-Workspaces
     - Method: `GET`
     - Serializer: `WorkspaceSerializer`
     - Functionality: `just getting the workspaces belongs to user_id`
     - Authentication: `required`
     - Authorization: `normal-user can get his own workspaces info`
-    - URL: ``
+    - URL: `/workspaces/owned/`
     - Notes: `No Notes`
-    - status: `coming soon...`
-6. ## Show-Workspace-Members
-    - Method: ``
-    - Serializer: ``
-    - Functionality: ``
-    - Authentication: ``
-    - Authorization: ``
-    - URL: ``
+    - status: `ready`
+6. ## Get-Workspace-Members
+    - Method: `GET`
+    - Serializer: `WorkspaceSerializer`
+    - Functionality: `getting the workspace members`
+    - Authentication: `required`
+    - Authorization: `client / authenticated user but has to be a member of the required workspace`
+    - URL: `/workspaces/{id}/members/`
     - Notes: `No Notes`
-    - status: `coming soon...`
+    - status: `ready`
 7. ## Get-Workspace-Owner
     - Method: ``
     - Serializer: ``
@@ -72,6 +72,16 @@
     - URL: ``
     - Notes: `No Notes`
     - status: `coming soon...`
+8. ## Leave_Workspace
+    - Method: ``
+    - Serializer: ``
+    - Functionality: ``
+    - Authentication: ``
+    - Authorization: ``
+    - URL: ``
+    - Notes: `No Notes`
+    - status: `coming soon...`
+
 
 
 

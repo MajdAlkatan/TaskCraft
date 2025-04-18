@@ -6,6 +6,17 @@ from .models import Workspace , Users_Workspaces , Invite
 from users.models import User
 # from users.serializers import UserSerializer
 
+class LocalUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields=[
+            'id',
+            'fullname',
+            'email',
+            'image',
+            'created_at',
+            'updated_at',
+        ]
 
 class InviteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,13 +30,23 @@ class InviteSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         ]
+    
+    def __init__(self, instance=None, data=serializers.empty, **kwargs):
+        super().__init__(instance, data, **kwargs)
+         
+        if self.context.get('remove_receiver' , False):
+            self.fields.pop('receiver')
+        if self.context.get('remove_sender' , False):
+            self.fields.pop('sender')
+        if self.context.get('extend_sender' , False):
+            self.fields['sender'] = LocalUserSerializer(read_only=True)
 
 class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users_Workspaces
         fields = [
             'id',
-            'user_role'
+            'user_role',
         ]
 
     def __init__(self, instance=None, data=..., **kwargs):
@@ -37,17 +58,6 @@ class MembershipSerializer(serializers.ModelSerializer):
             self.fields['workspace'] = serializers.PrimaryKeyRelatedField(read_only=True)
 
 class WorkspaceSerializer(serializers.ModelSerializer):
-    class LocalUserSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = User
-            fields=[
-                'id',
-                'fullname',
-                'email',
-                'image',
-                'created_at',
-                'updated_at',
-            ]
     
     owner = LocalUserSerializer(required=False)
     members = MembershipSerializer(
@@ -74,6 +84,19 @@ class WorkspaceSerializer(serializers.ModelSerializer):
                 'required': False
             },
         }
+
+    def __init__(self, instance=None, data=serializers.empty, **kwargs):
+        super().__init__(instance, data, **kwargs)
+        
+        if not self.context.get('add_owner' , True):
+            self.fields.pop('owner')
+
+    def create(self, validated_data):
+        # ensure user can't create more that 10 workspaces
+        user_workspaces = Workspace.objects.filter(owner_id=self.context['request'].user)
+        if len(user_workspaces) > 9: # there is 10 or more workspaces that this user owns
+            raise serializers.ValidationError(f'User {self.context['request'].user.id} has reached the allowed limit of workspaces count !')
+        return super().create(validated_data)
 
     def update(self, instance, validated_data):
         if not Users_Workspaces.objects.filter(
