@@ -1,0 +1,82 @@
+:root {
+    --workspace-color-1: #f44336;
+    --workspace-color-2: #e91e63;
+    --workspace-color-3: #9c27b0;
+    --workspace-color-4: #673ab7;
+    --workspace-color-5: #3f51b5;
+    --workspace-color-6: #2196f3;
+    --workspace-color-7: #03a9f4;
+    --workspace-color-8: #00bcd4;
+    --workspace-color-9: #009688;
+    --workspace-color-10: #4caf50;
+  }
+  
+  .dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+    color: #d1d5db;
+    font-family: sans-serif;
+  }
+  
+  .dropdown-toggle {
+    background: transparent;
+    border: none;
+    color: #d1d5db;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+  }
+  
+  .dropdown-content {
+    position: absolute;
+    top: 30px;
+    background: #1f2937;
+    color: #f3f4f6;
+    padding: 10px;
+    width: 220px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 999;
+  }
+  
+  .section-title {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 5px;
+  }
+  
+  .workspace-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .workspace-item:hover {
+    background: #374151;
+  }
+  
+  .workspace-item.active {
+    font-weight: bold;
+  }
+  
+  .workspace-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    margin-right: 8px;
+  }
+  
+  .divider {
+    border: 0.5px solid #374151;
+    margin: 8px 0;
+  }
+  

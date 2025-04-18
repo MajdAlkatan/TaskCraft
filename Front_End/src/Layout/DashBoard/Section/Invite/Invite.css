@@ -1,13 +1,14 @@
 dialog.invite-dialog {
   width: 40%; /* Set a fixed width for the dialog */
-  padding: 10px; /* Add padding inside the dialog */
+  padding: 20px; /* Add padding inside the dialog */
   border: none; /* Remove default border */
   border-radius: 8px; /* Rounded corners */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  background-color: #ffffff; /* White background */
+  background-color: #1f2937; /* White background */
   display: flex; /* Use flexbox for layout */
   flex-direction: column; /* Stack children vertically */
   z-index: 1111;
+  color: white;
 }
 
 .invite-header {
@@ -37,8 +38,8 @@ dialog.invite-dialog {
 .invite-body {
   display: flex; /* Use flexbox for body layout */
   flex-direction: column; /* Stack children vertically */
-  padding: 5px;
-  border: 1px solid black;
+  padding: 10px;
+  border: 1px dashed rgb(255, 255, 255);
   margin: 0;
 }
 
@@ -58,6 +59,7 @@ dialog.invite-dialog {
 
 .invite-members {
   margin-top: 10px; /* Space above members section */
+  padding: 10px;
 }
 
 .invite-members-title {

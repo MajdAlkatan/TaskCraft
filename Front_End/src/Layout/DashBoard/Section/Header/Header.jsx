@@ -2,10 +2,13 @@ import React, { Fragment } from "react";
 import "./Header.css";
 import { FaSearch, FaBell, FaCalendarAlt } from "react-icons/fa";
 import IconButton from "../../../../Components/Button/IconButton/IconButton";
+import WorkspaceDropdown from "../../../../Components/WorkspaceDropdown/WorkspaceDropdown";
 function Header() {
   return (
     <header className="header">
       <div className="brandName">Task<p className="craft">Craft</p> </div>
+      <WorkspaceDropdown />
+
       <div className="search-bar">
         <FaSearch className="icon" />
         <input type="text" placeholder="Search your task here..." />
