@@ -1,0 +1,57 @@
+.member-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.member-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.member-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.member-name {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.member-email {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.member-role {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.member-role.owner {
+  font-weight: bold;
+  color: #10b981; /* green */
+}
+
+.member-role-select {
+  padding: 4px 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: none;
+  color: #ffffff;
+}
+.member-role-select option {
+  background-color: #111827;
+}
