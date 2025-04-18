@@ -3,6 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.core import exceptions
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets , status
@@ -52,10 +53,10 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
                 if not self.request.user.is_staff:
                     self.permission_classes.append(IsAdminUser)
-        if self.action == 'members'  or self.action == 'leave':
+        if self.action == 'members' or self.action == 'leave':
             self.permission_classes.append(IsAuthenticated)
             self.permission_classes.append(IsMember)
-        if self.action == 'invite_user':
+        if self.action == 'invite_user' or self.action == 'kick_user':
             self.permission_classes.append(IsAuthenticated)
             self.permission_classes.append(IsOwner)
         return super().get_permissions()
@@ -65,12 +66,20 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
                 if not self.request.user.is_staff:
-                    qs = qs.filter(owner=self.request.user)
+                    qs = Workspace.objects.filter(
+                        Q(members__user=self.request.user)|
+                        Q(owner=self.request.user)
+                    )
                     # normal user can view and update only his own info
         if self.action == 'owned':
             qs = qs.filter(owner=self.request.user)
         return qs
 
+    # def get_serializer(self, *args, **kwargs):
+    #     if self.action == 'list':
+    #         return super().get_serializer(context={"do_not_filter_members":True},*args, **kwargs)    
+    #     return super().get_serializer(*args, **kwargs)
+    
     # Read
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -126,7 +135,8 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(
             instance=workspace,
             context={
-                'add_owner': False
+                'add_owner': False,
+                'do_not_filter_members': True
             }
         )
         return Response(serializer.data.get('members') , status=status.HTTP_200_OK)
@@ -147,12 +157,13 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             return Response({"message" : "user that wants to leave workspace is already not member !"} , status.HTTP_400_BAD_REQUEST)
         membership = membership.get()
         membership.delete()
-        #TODO: Must delete all tasks he created or he was contributing in @Ai_Almusfi
+        #TODO: Must delete all tasks he created or he was contributing in. @Ali_Almusfi
         return Response(None , status.HTTP_204_NO_CONTENT)
 
     @action(detail=True , methods=['post'] , serializer_class=InviteSerializer)
     def invite_user(self, request , pk):
-        workspace = self.get_object()
+        if request.data.get('receiver') == request.user.id:
+            return Response({"message": "User can not invite himself :) "} , status.HTTP_400_BAD_REQUEST)
         serializer = self.get_serializer(
             data={
                 "workspace":pk,
@@ -166,3 +177,16 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             return Response(serializer.data , status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True , methods=['delete'])
+    def kick_user(self, request , pk):
+        workspace = self.get_object()
+        if not (workspace.owner == request.user):
+            return Response({"message" : "user that wants to kick users is not the owner !"} , status.HTTP_400_BAD_REQUEST)
+        membership = Users_Workspaces.objects.filter(user=request.data.get('kicked_user'),workspace=workspace)
+        if not membership.exists():
+            return Response({"message" : "user that you want to kick from workspace is already not a member in the specified workspace !"} , status.HTTP_400_BAD_REQUEST)
+        membership = membership.get()
+        membership.delete()
+        #TODO: Must delete all tasks he created or he was contributing in. @Ali_Almusfi
+        return Response(None , status.HTTP_204_NO_CONTENT)

@@ -109,10 +109,11 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         # print(f'\ndata[members]: {data['members']}\n')
-        filtered_members = []
-        for member in data['members']:
-            # print(f'\nmember: {member}\n')
-            if member.get('user_role') != 'owner':
-                filtered_members.append(member)
-        data['members'] = filtered_members
+        if not self.context.get('do_not_filter_members' , False):
+            filtered_members = []
+            for member in data['members']:
+                # print(f'\nmember: {member}\n')
+                if member.get('user_role') != 'owner':
+                    filtered_members.append(member)
+            data['members'] = filtered_members
         return data

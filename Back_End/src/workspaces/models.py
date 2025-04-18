@@ -57,10 +57,9 @@ class Invite(TimeStampedModel):
     receiver = models.ForeignKey(User , related_name='received_invites' , on_delete=models.CASCADE)
     workspace = models.ForeignKey(Workspace , related_name='invites' , on_delete=models.CASCADE)
     class Status_Choices(models.TextChoices):
-        PENDING = 'pending' , 'Pending',
-        ACCEPTED = 'accepted' , 'Accepted',
-        REJECTED = 'rejected' , 'Rejected',
-        CANCELED = 'canceled' , 'Canceled'
+        PENDING = 'pending',
+        ACCEPTED = 'accepted',
+        REJECTED = 'rejected'
     status = models.CharField(
         max_length=8,
         choices=Status_Choices,
@@ -68,10 +67,10 @@ class Invite(TimeStampedModel):
     )
 
     # checking if the invite still waiting for an action from user
-    def invalid_invite(self):
+    def valid_invite(self):
         if self.status == 'pending':
-            return False
-        return True
+            return True
+        return False
 
     def __str__(self):
         return f"user {self.sender.fullname} sent an invite to user {self.receiver.fullname} into the workspace {self.workspace.name}"

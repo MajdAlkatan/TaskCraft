@@ -9,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from workspaces.models import Invite
+from workspaces.models import Invite , Users_Workspaces
 from workspaces.serializers import InviteSerializer
 
 from .models import User
@@ -21,6 +21,8 @@ from .serializers import (
 )
 from .filters import UserFilter
 # from .permissions import IsClient
+
+# import pdb;
 # Create your views here.
 
 import logging
@@ -51,7 +53,8 @@ class UserViewSet(viewsets.ModelViewSet):
         
         if (self.action == 'create' or self.action == 'destroy'
             or self.action == 'update' or self.action == 'partial_update'
-            or self.action == 'received_invites' or self.action == 'sent_invites'):
+            or self.action == 'received_invites' or self.action == 'sent_invites'
+            or self.action == 'cancel_invite' or self.action == 'reject_invite' or self.action == 'accept_invite'):
             self.permission_classes.append(IsAuthenticated)
 
         if self.action == 'list':
@@ -156,3 +159,63 @@ class UserViewSet(viewsets.ModelViewSet):
             },
             status.HTTP_200_OK
         )
+
+    @action(detail=False , methods=['post','patch'] , serializer_class=InviteSerializer)
+    def accept_invite(self , request):
+        if not request.data.get('invite_id'):
+            return Response({"message": "the invite_id is required!"}, status.HTTP_400_BAD_REQUEST)
+        invite = Invite.objects.filter(id=request.data.get('invite_id')).first()
+        if not invite:
+            return Response({"message": "the invite specified doesn't exist!"}, status.HTTP_400_BAD_REQUEST)
+        if not invite.receiver == request.user:
+            return Response({"message": "the invite specified doesn't belong to the authenticated user!"}, status.HTTP_400_BAD_REQUEST)
+        if not invite.valid_invite():
+            return Response({"message": "the invite specified status isn't pending! it can't be updated"}, status.HTTP_400_BAD_REQUEST)
+        
+        invite.status = 'accepted'
+        invite.save()
+
+        Users_Workspaces.objects.create(
+            user=request.user,
+            workspace=invite.workspace,
+            user_role='can_view'
+        )
+
+        serializer = self.get_serializer(invite)
+        return Response(serializer.data, status.HTTP_201_CREATED)
+
+    @action(detail=False , methods=['patch'] , serializer_class=InviteSerializer)
+    def reject_invite(self , request):
+        if not request.data.get('invite_id'):
+            return Response({"message": "the invite_id is required!"}, status.HTTP_400_BAD_REQUEST)
+        invite = Invite.objects.filter(id=request.data.get('invite_id')).first()
+        if not invite:
+            return Response({"message": "the invite specified doesn't exist!"}, status.HTTP_400_BAD_REQUEST)
+        if not invite.receiver == request.user:
+            return Response({"message": "the invite specified doesn't belong to the authenticated user!"}, status.HTTP_400_BAD_REQUEST)
+        if not invite.valid_invite():
+            return Response({"message": "the invite specified status isn't pending! it can't be updated"}, status.HTTP_400_BAD_REQUEST)
+        invite.delete()
+        return Response(None, status.HTTP_202_ACCEPTED)
+
+    @action(detail=False , methods=['delete'] , serializer_class=InviteSerializer)
+    def cancel_invite(self , request):
+        try:
+            if not request.data.get('invite_id'):
+                return Response({"message": "the invite_id is required!"}, status.HTTP_400_BAD_REQUEST)
+            invite = Invite.objects.filter(id=request.data['invite_id']).first()
+            if not invite:
+                return Response({"message": "the invite specified doesn't exist!"}, status.HTTP_400_BAD_REQUEST)
+            if not invite.sender == request.user:
+                return Response({"message": "the invite specified doesn't belong to the authenticated user!"}, status.HTTP_400_BAD_REQUEST)
+            if not invite.valid_invite():
+                return Response({"message": "the invite specified status isn't pending! it can't be canceled/deleted"}, status.HTTP_400_BAD_REQUEST)
+            invite.delete()
+            return Response(None, status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            print(f"Error in cancel_invite: {str(e)}")
+            return Response(
+                {"message": "Internal server error"}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
