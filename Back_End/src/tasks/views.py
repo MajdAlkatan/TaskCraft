@@ -45,7 +45,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     #     return super().get_permissions()
 
     def get_serializer_class(self):
-        if self.action == 'create' or self.action == 'update':
+        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update':
             return TaskCreateSerializer
         return super().get_serializer_class()
     
@@ -54,10 +54,11 @@ class TaskViewSet(viewsets.ModelViewSet):
         if 'HTTP_AUTHORIZATION' in self.request.META:
             if not self.request.user.is_staff:
                 qs = qs.filter(owner = self.request.user.workspace)
+                # TODO 
                 # qs = qs.filter(user = self.request.user)
         return qs
     
-    @action(detail = True , methods = ['patch'] , serializer_class = ChangeImageSerializer)
+    @action(detail = True , methods = ['patch'] , serializer_class = ChangeImageSerializer )
     def change_image(self , request):
         serializer = self.get_serializer(data = request.data)
         if serializer.is_valid():
@@ -136,7 +137,15 @@ class TaskCategoryViewSet(viewsets.ModelViewSet):
         elif self.action == 'add_options':
             return WorkspaceCategoryOptionAssignmentSerializer
         return super().get_serializer_class() 
-
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if 'HTTP_AUTHORIZATION' in self.request.META:
+            if not self.request.user.is_staff:
+                # Filter by workspace - adjust field names based on your actual model
+                user_workspace = self.request.user.workspace
+                qs = qs.filter(workspace=user_workspace)
+        return qs
 
     @action(detail=False, methods=['post'], url_path='assign-to-workspace')
     def assign_to_workspace(self, request):

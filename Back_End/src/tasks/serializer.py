@@ -70,12 +70,9 @@ class CategoryOptionSerializer(serializers.ModelSerializer):
 #         }
 
 class TaskCategorySerializer(serializers.ModelSerializer):
-
-    # options = CategoryOptionSerializer(many=True, required=False)
-    
     class Meta:
         model = Task_Category
-        fields = ['id', 'name' ]
+        fields = ['id', 'name']
         extra_kwargs = {'id': {'required': False}}
 
 
@@ -102,7 +99,13 @@ class TaskCategorySerializer(serializers.ModelSerializer):
     #     return task_category
 
 class TaskSerializer(serializers.ModelSerializer):
-    # owner_tasks = UserTasksSerializer(many = True , read_only = True)
+    class UsersTasksSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = users_tasks
+            fields = ['user']
+
+
+    users_task = UsersTasksSerializer(many = True)
     items = TasksTaskCategorySerializer(many = True , read_only = True)
     class Meta:
         model = Task
@@ -111,13 +114,15 @@ class TaskSerializer(serializers.ModelSerializer):
             'title',
             'description',
             'start_date',
+            'end_date',
+            'out_dated',
             'created_at',
             'updated_at',
+            'workspace_id',
             'owner_id',
             'image',
-            # 'user',
-            # 'owner_tasks',
             'items',
+            'users_task',
         )
         # extra_kwargs = {
         #     'image': {'required': False}
@@ -136,7 +141,7 @@ class TaskCreateSerializer(serializers.ModelSerializer):
             fields = ['user']
 
 
-    users = UsersTasksSerializer(many = True)
+    users_task = UsersTasksSerializer(many = True)
     items = TasksTaskCategoryCreateSerializer(many = True)
     class Meta:
         model = Task
@@ -144,11 +149,13 @@ class TaskCreateSerializer(serializers.ModelSerializer):
             'title',
             'description',
             'start_date',
-            'workspace'
+            'end_date',
+            # 'out_dated',
+            'workspace',
             'owner',
             'image',
             'items',
-            'users'
+            'users_task'
         )
         extra_kwargs = {
             'image': {'required': False}
@@ -159,7 +166,7 @@ class TaskCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         task_data = validated_data.pop('items')
-        task_user = validated_data.pop('users')
+        task_user = validated_data.pop('users_task')
 
         with transaction.atomic():
             task = Task.objects.create(**validated_data)
@@ -175,15 +182,19 @@ class TaskCreateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         task_data = validated_data.pop('items')
+        # if instance.valid_for_edit():
+        task_user = validated_data.pop('users_task')
         instance = super().update(instance , validated_data)
 
-        if instance.valid_for_edit():
-            task_user = validated_data.pop('users')
-            for user in task_user:
+        if task_user is not None:
+            instance.users_task.all().delete()
+
+        for user in task_user:
                 users_tasks.objects.create(task = instance , **user)
 
 
         # Category_Option.objects.get(task_data.items.category_option)      
+
 
         if task_data is not None:
             instance.items.all().delete()
@@ -350,7 +361,7 @@ class UpdateTaskCategorySerializer(serializers.Serializer):
         queryset=Task_Category.objects.all(),
         source='category'
     )
-    name = serializers.CharField(max_length=20, required=False)
+    name = serializers.CharField(max_length=20, required=True)
 
     def validate(self, data):
         if not workspace_category_option.objects.filter(
