@@ -52,7 +52,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
                 if not self.request.user.is_staff:
                     self.permission_classes.append(IsAdminUser)
-        if self.action == 'members'  or self.action == 'leave':
+        if self.action == 'members' or self.action == 'leave':
             self.permission_classes.append(IsAuthenticated)
             self.permission_classes.append(IsMember)
         if self.action == 'invite_user':
@@ -147,7 +147,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             return Response({"message" : "user that wants to leave workspace is already not member !"} , status.HTTP_400_BAD_REQUEST)
         membership = membership.get()
         membership.delete()
-        #TODO: Must delete all tasks he created or he was contributing in @Ai_Almusfi
+        #TODO: Must delete all tasks he created or he was contributing in @Ali_Almusfi
         return Response(None , status.HTTP_204_NO_CONTENT)
 
     @action(detail=True , methods=['post'] , serializer_class=InviteSerializer)
