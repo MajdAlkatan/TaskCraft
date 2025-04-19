@@ -1,5 +1,5 @@
 .btn {
-    background-color: #f4511e; /* Orange color */
+    background-color: #ff5555; /* Orange color */
     color: white;
     font-size: 14px;
     font-weight: 600;
@@ -11,7 +11,7 @@
   }
   
   .btn:hover {
-    background-color: #d84315;
+    background-color: #d81515;
   }
   
   .btn:active {

@@ -1,12 +1,12 @@
 from django.shortcuts import render
-from rest_framework import viewsets , status , filters
+from rest_framework import viewsets , status , filters , generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated , IsAdminUser , AllowAny
-from .models import Task , Category_Option , Task_Category
-from .serializer import TaskSerializer , TaskCreateSerializer , CategoryOptionSerializer , TaskCategoryCreateSerializer ,TaskCategorySerializer , ChangeImageSerializer
+from .models import Task , Category_Option , Task_Category , workspace_category_option
+from .serializer import TaskSerializer , TaskCreateSerializer , CategoryOptionSerializer  ,TaskCategorySerializer , ChangeImageSerializer , WorkspaceCategoryAssignmentSerializer , WorkspaceCategoryOptionAssignmentSerializer , UpdateCategoryOptionSerializer , UpdateTaskCategorySerializer
 from .filter import TaskFilter
 # Create your views here.
 
@@ -35,6 +35,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     ordering_fields = ['title']
 
 
+    
 
     # def get_permissions(self):
     #     self.permission_classes = [AllowAny]
@@ -44,7 +45,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     #     return super().get_permissions()
 
     def get_serializer_class(self):
-        if self.action == 'create' or self.action == 'update':
+        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update':
             return TaskCreateSerializer
         return super().get_serializer_class()
     
@@ -53,12 +54,25 @@ class TaskViewSet(viewsets.ModelViewSet):
         if 'HTTP_AUTHORIZATION' in self.request.META:
             if not self.request.user.is_staff:
                 qs = qs.filter(owner = self.request.user.workspace)
+                # TODO 
                 # qs = qs.filter(user = self.request.user)
         return qs
     
-    @action(detail = True , methods = ['patch'] , serializer_class = ChangeImageSerializer)
-    def change_image(self , request):
-        serializer = self.get_serializer(data = request.data)
+    @action(detail = True , methods = ['patch'] , serializer_class = ChangeImageSerializer )
+    def change_image(self , request , pk=None):
+        try:
+            task = self.get_object()
+        except Task.DoesNotExist:
+            return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if 'image' not in request.FILES:
+            return Response({'error': 'No image provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # TODO
+        # if task.owner != request.user:  
+        #     return Response({'error': 'You are not the owner of this task'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(task, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
@@ -76,6 +90,12 @@ class CategoryOptionsViewSet(viewsets.ModelViewSet):
         # IsCliet, TODO
     ]
 
+    # def get_serializer_class(self):
+    #     # can also check if POST: if self.request.method == 'POST
+    #     if self.action == 'create' or self.action == 'update':
+    #         return CreateOption
+    #     return super().get_serializer_class()
+
 #####TODO(if ther is workspace_id in the Task_Category Model and the related_name is category__workspace)
     # def get_queryset(self):
     #     qs = super().get_queryset()
@@ -90,13 +110,13 @@ class CategoryOptionsViewSet(viewsets.ModelViewSet):
 
 
 
-class TaskCategoryViewSet(viewsets.ModelViewSet):
-    queryset = Task_Category.objects.all()
-    serializer_class = TaskCategorySerializer
-    permission_classes = [
-        IsAuthenticated,
-        # IsCliet, TODO
-    ]
+# class TaskCategoryViewSet(viewsets.ModelViewSet):
+#     queryset = Task_Category.objects.all()
+#     serializer_class = TaskCategorySerializer
+#     permission_classes = [
+#         IsAuthenticated,
+#         # IsCliet, TODO
+#     ]
 
 #####TODO(if ther is workspace_id in the Task_Category Model)
     # def get_queryset(self):
@@ -107,3 +127,82 @@ class TaskCategoryViewSet(viewsets.ModelViewSet):
     #             user_workspace = self.request.user.workspace
     #             qs = qs.filter(workspace=user_workspace)
     #     return qs
+
+
+# class AssignOptionsToCategoryAPIView(generics.CreateAPIView):
+#     model = workspace_category_option
+#     serializer_class = AssignOptionsToCategorySerializer
+
+
+
+class TaskCategoryViewSet(viewsets.ModelViewSet):
+    queryset = Task_Category.objects.all()
+    serializer_class = TaskCategorySerializer
+    permission_classes = [
+        IsAuthenticated,
+        # IsCliet, TODO
+    ]
+
+    def get_serializer_class(self):
+        if self.action == 'assign_to_workspace':
+            return WorkspaceCategoryAssignmentSerializer
+        elif self.action == 'add_options':
+            return WorkspaceCategoryOptionAssignmentSerializer
+        return super().get_serializer_class() 
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if 'HTTP_AUTHORIZATION' in self.request.META:
+            if not self.request.user.is_staff:
+                # Filter by workspace - adjust field names based on your actual model
+                user_workspace = self.request.user.workspace
+                qs = qs.filter(workspace=user_workspace)
+        return qs
+
+    @action(detail=False, methods=['post'], url_path='assign-to-workspace')
+    def assign_to_workspace(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        category = serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+    @action(detail=False, methods=['post'], url_path='add-options')
+    def add_options(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+    @action(detail=False, methods=['put'], url_path='update-option')
+    def update_option(self, request):
+        serializer = UpdateCategoryOptionSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        
+        
+        option = serializer.validated_data['option']
+        
+        updated_option = serializer.update(option, serializer.validated_data)
+        
+        return Response(serializer.to_representation(updated_option))
+    
+
+    @action(detail=False, methods=['patch'], url_path='update-category')
+    def update_category(self, request):
+        serializer = UpdateTaskCategorySerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        
+        # Get the category instance from validated data
+        category = serializer.validated_data['category']
+        
+        # Perform the update
+        updated_category = serializer.update(category, serializer.validated_data)
+        
+        return Response(serializer.to_representation(updated_category))

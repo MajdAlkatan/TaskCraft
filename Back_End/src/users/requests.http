@@ -66,3 +66,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
     "user": 5,
     "user_role": "can_view"
 }
+
+###
+POST http://127.0.0.1:8000/api/workspaces/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Nzk2NzY2LCJpYXQiOjE3NDQ3OTMxNjYsImp0aSI6ImY3OTMwNWRmYWYxNzRiNDFhNjRlYTMxZTJiODI0MDYwIiwidXNlcl9pZCI6MX0.BMA9KWqOEiN2xvMw97mCkSYII4qIgvgI3CXEPyMHV1g
+Content-Type: application/json
+CLIENT-USERNAME: Majd
+CLIENT-SECRET: sl:a,"hd?1he:l3z4dxvx=f2342jr0io9)54(-)[4j2f+(d0j545323fs\*sdf/sks%dnv,`ls#dfkl}
+
+{
+    "name": "Alosh"
+}

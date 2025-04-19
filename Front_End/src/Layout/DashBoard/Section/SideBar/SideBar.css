@@ -1,6 +1,6 @@
 .sidebar {
   width: 250px;
-  background: #ff6b6b;
+  background: #1f2937;
   color: white;
   padding: 20px;
   height: 100vh;
@@ -16,13 +16,13 @@
 }
 
 .profile-img {
-  width: 60px;
-  height: 60px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   border: 3px solid white;
   position: absolute; /* Position the image absolutely */
-  bottom: 5rem; /* Move the image up to make it half out */
-  left: calc(50% - 30px); /* Center the image horizontally */
+  bottom: 4rem; /* Move the image up to make it half out */
+  left: calc(50% - 44px); /* Center the image horizontally */
 }
 
 .profile h3 {

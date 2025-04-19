@@ -2,7 +2,8 @@
 ############# Tasks  ###################
 
 GET http://127.0.0.1:8000/api/tasks/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NjUxMTg3LCJpYXQiOjE3NDQ2NDc1ODcsImp0aSI6IjE3YmIxM2NjMzE0NDQ0Njg5OTY0ZWQwNTVhZWM3ZjcwIiwidXNlcl9pZCI6MX0.A1CeI6DzW37-KQLq7mZ6AVZNqe84ds8EFjojiR-62EU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc2NTc5LCJpYXQiOjE3NDQ1NzI5NzksImp0aSI6IjVkMmViMmIyYzg5ODRiMGU5ZTc2NThhNzA0MGIyNDE1IiwidXNlcl9pZCI6MX0.9huCqHQ_BfvqatYIVeNRNi-BZttWG799BioXVSIN88Q
+
 ###
 
 POST http://127.0.0.1:8000/api/tasks/ HTTP/1.1
@@ -13,7 +14,8 @@ Content-Type: application/json
     "title": "Task 1",
     "description": "description for task 1",
     "start_date": "2025-04-12",
-    "owner": 1,
+    "workspace": 1,
+    "owner": 1,   
     "items": [
         {
             "task_category": 2,
@@ -25,7 +27,7 @@ Content-Type: application/json
 
 ###
 
-GET http://127.0.0.1:8000/api/tasks/2/ HTTP/1.1
+clGET http://127.0.0.1:8000/api/tasks/2/ HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc2NTc5LCJpYXQiOjE3NDQ1NzI5NzksImp0aSI6IjVkMmViMmIyYzg5ODRiMGU5ZTc2NThhNzA0MGIyNDE1IiwidXNlcl9pZCI6MX0.9huCqHQ_BfvqatYIVeNRNi-BZttWG799BioXVSIN88Q
 
 ###
@@ -70,29 +72,33 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 ############# Category_Options ###################
 
 GET http://127.0.0.1:8000/api/category_options/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0OTAwNDI1LCJpYXQiOjE3NDQ4OTY4MjUsImp0aSI6IjA3Nzg0M2Y4M2FmNjQwMzE4ZGY3NWRhMTU3YWNhNDg1IiwidXNlcl9pZCI6MX0.XEWUIgmul0rRIoAPcW1pPzx94ddzArAJB5fc5Ikwac8
 
 ###
 
 POST http://127.0.0.1:8000/api/category_options/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0OTAwNDI1LCJpYXQiOjE3NDQ4OTY4MjUsImp0aSI6IjA3Nzg0M2Y4M2FmNjQwMzE4ZGY3NWRhMTU3YWNhNDg1IiwidXNlcl9pZCI6MX0.XEWUIgmul0rRIoAPcW1pPzx94ddzArAJB5fc5Ikwac8
 Content-Type: application/json
 
 {
-    "name": "Hard",
-    "task_category": 2
+    "name": "Hoo",
 }
 
 
 ###
 
 PUT http://127.0.0.1:8000/api/category_options/1/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODgzOTU2LCJpYXQiOjE3NDQ4ODAzNTYsImp0aSI6Ijg4Yzc1NzdiZTg5ZjQ1ZDY4YjZhYzNiMzFiY2ExODE2IiwidXNlcl9pZCI6MX0.ERDA3k6R0tDBC_gmzQ_JxQtkLcB-6fVg1EOlgb_hLus
 Content-Type: application/json
 
 {
-    "name": "Hard1",
-    "task_category": 2
+    "name": "easy1",
+    "options":[
+        {
+            "workspace": 1,
+            "task_category":2
+        }
+    ]
 }
 
 
@@ -116,24 +122,26 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 
 GET http://127.0.0.1:8000/api/task_categories/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Nzk0NjA3LCJpYXQiOjE3NDQ3OTEwMDcsImp0aSI6IjNmNjZiODY4NjdkMjQ0NmQ4ZDQzNGI3YzgyNzFhNjMyIiwidXNlcl9pZCI6MX0.zh4HsyenDaasizTssrBLuindq-VskkMGpD1FHAcKsko
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0OTAwNDI1LCJpYXQiOjE3NDQ4OTY4MjUsImp0aSI6IjA3Nzg0M2Y4M2FmNjQwMzE4ZGY3NWRhMTU3YWNhNDg1IiwidXNlcl9pZCI6MX0.XEWUIgmul0rRIoAPcW1pPzx94ddzArAJB5fc5Ikwac8
+
 
 
 ###
 
 
 POST http://127.0.0.1:8000/api/task_categories/ HTTP/1.1
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0OTAwNDI1LCJpYXQiOjE3NDQ4OTY4MjUsImp0aSI6IjA3Nzg0M2Y4M2FmNjQwMzE4ZGY3NWRhMTU3YWNhNDg1IiwidXNlcl9pZCI6MX0.XEWUIgmul0rRIoAPcW1pPzx94ddzArAJB5fc5Ikwac8
 Content-Type: application/json
 
 {
-    "name": "Category 1"
+    "name": "Category 4",
+
 }
 
 ###
 
 GET http://127.0.0.1:8000/api/task_categories/2/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTc0NzU5LCJpYXQiOjE3NDQ1NzExNTksImp0aSI6IjAyNTJiOTc4YjAyYjRhNjc4YzBjMmIyYTdkNDRmOGRjIiwidXNlcl9pZCI6Mn0.NeugK-Q1Gg2cOLXPjWOGjXxWMDufpUQMRk3WD-V4kuM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0OTAwNDI1LCJpYXQiOjE3NDQ4OTY4MjUsImp0aSI6IjA3Nzg0M2Y4M2FmNjQwMzE4ZGY3NWRhMTU3YWNhNDg1IiwidXNlcl9pZCI6MX0.XEWUIgmul0rRIoAPcW1pPzx94ddzArAJB5fc5Ikwac8
 
 ###
 
@@ -151,3 +159,22 @@ Content-Type: application/json
 DELETE http://127.0.0.1:8000/api/task_categories/1/ HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NTYwOTIzLCJpYXQiOjE3NDQ1NTczMjMsImp0aSI6ImVhZGMyYzg3NDkxODQ3OTBiMTllYTllNjRjZDM2NGI0IiwidXNlcl9pZCI6MX0.57yedo7lD3Ad_10pBcicuVgJSfOuIZhqCwrXIobgRtw
 
+###
+
+POST http://127.0.0.1:8000/api/task_categories/assign/ HTTP/1.1
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0OTAwNDI1LCJpYXQiOjE3NDQ4OTY4MjUsImp0aSI6IjA3Nzg0M2Y4M2FmNjQwMzE4ZGY3NWRhMTU3YWNhNDg1IiwidXNlcl9pZCI6MX0.XEWUIgmul0rRIoAPcW1pPzx94ddzArAJB5fc5Ikwac8
+Content-Type: application/json
+
+{
+    "task_category": 4,
+    "options": [
+        {
+            "id": 1,
+            "name": "easy1"
+        },
+        {
+            "id": 5,
+            "name": "Hoo"
+        }
+    ]
+}
