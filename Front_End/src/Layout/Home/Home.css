@@ -1,0 +1,16 @@
+.home-container {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .workspace-buttons {
+    margin-top: 2rem;
+  }
+  
+  .workspace-buttons button {
+    margin: 0 1rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
