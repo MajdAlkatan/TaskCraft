@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from datetime import datetime , timedelta
 
 # Create your models here.
@@ -63,7 +64,13 @@ def default_invite_expire_date():
 class Invite(TimeStampedModel):
     class Meta:
         db_table = 'invites'
-        unique_together = ['sender' , 'receiver' , 'workspace']
+        constraints=[
+            models.UniqueConstraint(
+                fields=['sender' , 'receiver' , 'workspace'],
+                condition = Q(status='pending'),
+                name='unique_pending_invite'
+            ),
+        ]
     sender = models.ForeignKey(User , related_name='sent_invites' , on_delete=models.CASCADE)
     receiver = models.ForeignKey(User , related_name='received_invites' , on_delete=models.CASCADE)
     workspace = models.ForeignKey(Workspace , related_name='invites' , on_delete=models.CASCADE)
