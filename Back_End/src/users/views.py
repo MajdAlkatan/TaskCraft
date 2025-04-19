@@ -1,6 +1,7 @@
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
+from datetime import datetime
 from rest_framework import viewsets , status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -134,6 +135,19 @@ class UserViewSet(viewsets.ModelViewSet):
                 'extend_sender': True
             }
         )
+
+
+        # filtering the data to exclude the expired invites and delete them
+        filtered_data = []
+        for invite_item in serializer.data:
+            if not invite_item.expire_date < datetime.today():
+                invite = Invite.objects.get(invite_item.id)
+                invite.delete()
+            else:
+                filtered_data.append(invite_item)
+        serializer.data = filtered_data
+        
+        
         return Response(
             {
                 "receiver_id":request.user.id,
@@ -152,6 +166,19 @@ class UserViewSet(viewsets.ModelViewSet):
                 'remove_sender': True,
             }
         )
+
+
+        # filtering the data to exclude the expired invites and delete them
+        filtered_data = []
+        for invite_item in serializer.data:
+            if not invite_item.expire_date < datetime.today():
+                invite = Invite.objects.get(invite_item.id)
+                invite.delete()
+            else:
+                filtered_data.append(invite_item)
+        serializer.data = filtered_data
+        
+        
         return Response(
             {
                 "sender_id":request.user.id,
@@ -171,6 +198,10 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"message": "the invite specified doesn't belong to the authenticated user!"}, status.HTTP_400_BAD_REQUEST)
         if not invite.valid_invite():
             return Response({"message": "the invite specified status isn't pending! it can't be updated"}, status.HTTP_400_BAD_REQUEST)
+        
+        if not (invite.expire_date < datetime.today()):
+            invite.delete()
+            return Response({"invite": "the specified invite is expired!"}, status.HTTP_400_BAD_REQUEST)
         
         invite.status = 'accepted'
         invite.save()
@@ -195,6 +226,11 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"message": "the invite specified doesn't belong to the authenticated user!"}, status.HTTP_400_BAD_REQUEST)
         if not invite.valid_invite():
             return Response({"message": "the invite specified status isn't pending! it can't be updated"}, status.HTTP_400_BAD_REQUEST)
+        
+        if not (invite.expire_date < datetime.today()):
+            invite.delete()
+            return Response({"invite": "the specified invite is expired!"}, status.HTTP_400_BAD_REQUEST)
+        
         invite.delete()
         return Response(None, status.HTTP_202_ACCEPTED)
 

@@ -27,9 +27,13 @@ class InviteSerializer(serializers.ModelSerializer):
             'receiver',
             'workspace',
             'status',
+            'expire_date',
             'created_at',
             'updated_at'
         ]
+        extra_kwargs={
+            'expire_date':{'read_only': True}
+        }
     
     def __init__(self, instance=None, data=serializers.empty, **kwargs):
         super().__init__(instance, data, **kwargs)
