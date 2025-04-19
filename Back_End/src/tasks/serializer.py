@@ -70,9 +70,19 @@ class CategoryOptionSerializer(serializers.ModelSerializer):
 #         }
 
 class TaskCategorySerializer(serializers.ModelSerializer):
+    class OptionIdSerializer(serializers.ModelSerializer):
+        # class OptionSerializer(serializers.ModelSerializer):
+        #     class Meta:
+        #         model = Category_Option
+        #         fields = ['name']
+        # name = OptionSerializer(many = False)
+        class Meta:
+            model = workspace_category_option
+            fields = ['category_option' ]
+    options = OptionIdSerializer(many = True)
     class Meta:
         model = Task_Category
-        fields = ['id', 'name']
+        fields = ['id', 'name' , 'options']
         extra_kwargs = {'id': {'required': False}}
 
 
@@ -261,17 +271,17 @@ class WorkspaceCategoryOptionAssignmentSerializer(serializers.Serializer):
     )
     options = CategoryOptionSerializer(many=True)
 
-    def validate(self, data):
+    # def validate(self, data):
         
-        if not workspace_category_option.objects.filter(
-            workspace=data['workspace'],
-            task_category=data['task_category'],
-            category_option=None
-        ).exists():
-            raise serializers.ValidationError(
-                "This category is not assigned to the specified workspace"
-            )
-        return data
+    #     if not workspace_category_option.objects.filter(
+    #         workspace=data['workspace'],
+    #         task_category=data['task_category'],
+    #         category_option=None
+    #     ).exists():
+    #         raise serializers.ValidationError(
+    #             "This category is not assigned to the specified workspace"
+    #         )
+    #     return data
 
     def create(self, validated_data):
         workspace = validated_data['workspace']
@@ -279,16 +289,23 @@ class WorkspaceCategoryOptionAssignmentSerializer(serializers.Serializer):
         options_data = validated_data['options']
         
         created_options = []
+
+        assignment, created = workspace_category_option.objects.get_or_create(
+            workspace=workspace,
+            task_category=task_category,
+            defaults={'category_option': None}
+        )
         
         for option_data in options_data:
             
             option = Category_Option.objects.create(**option_data)
             
 
-            workspace_category_option.objects.create(
+            workspace_category_option.objects.update_or_create(
                 workspace=workspace,
                 task_category=task_category,
-                category_option=option
+                category_option=None,
+                defaults={'category_option': option}
             )
             
             created_options.append(option)

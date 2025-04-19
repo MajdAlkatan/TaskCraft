@@ -59,8 +59,20 @@ class TaskViewSet(viewsets.ModelViewSet):
         return qs
     
     @action(detail = True , methods = ['patch'] , serializer_class = ChangeImageSerializer )
-    def change_image(self , request):
-        serializer = self.get_serializer(data = request.data)
+    def change_image(self , request , pk=None):
+        try:
+            task = self.get_object()
+        except Task.DoesNotExist:
+            return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if 'image' not in request.FILES:
+            return Response({'error': 'No image provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # TODO
+        # if task.owner != request.user:  
+        #     return Response({'error': 'You are not the owner of this task'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(task, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
