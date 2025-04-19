@@ -163,6 +163,12 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     def invite_user(self, request , pk):
         if request.data.get('receiver') == request.user.id:
             return Response({"message": "User can not invite himself :) "} , status.HTTP_400_BAD_REQUEST)
+        # checking if the user already a member in the workspace
+        workspace = self.get_object()
+        membership = Users_Workspaces.objects.filter(user_id=request.data.get('receiver') , workspace=workspace)
+        if membership.exists():
+            return Response({"message": "Invitee user in already a member in the workspace specified"} , status.HTTP_400_BAD_REQUEST)
+        
         serializer = self.get_serializer(
             data={
                 "workspace":pk,
