@@ -44,6 +44,7 @@ class User(AbstractBaseUser , PermissionsMixin , TimeStampedModel):
         upload_to=user_image_upload_path,
         default="defaults/user/default.png"
     )
+    points = models.IntegerField(default=0)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
