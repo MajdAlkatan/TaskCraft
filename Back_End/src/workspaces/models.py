@@ -1,7 +1,7 @@
 from django.db import models
+from datetime import datetime , timedelta
 
 # Create your models here.
-from django.db import models
 
 from tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
 from users.models import User
@@ -56,6 +56,10 @@ class Users_Workspaces(models.Model):
         super().save(*args,**kwargs)
         return True
 
+
+
+def default_invite_expire_date():
+    return datetime.today() + timedelta(days=7)
 class Invite(TimeStampedModel):
     class Meta:
         db_table = 'invites'
@@ -72,6 +76,7 @@ class Invite(TimeStampedModel):
         choices=Status_Choices,
         default=Status_Choices.PENDING
     )
+    expire_date = models.DateField(default=default_invite_expire_date, editable=False)
 
     def save(self,*args,**kwargs):
         if (self.status != 'pending' and self.status != 'accepted' and self.status != 'rejected'):
