@@ -49,6 +49,13 @@ class Users_Workspaces(models.Model):
         default= User_Role.CAN_VIEW
     )
 
+    def save(self,*args,**kwargs):
+        if (self.user_role != 'owner' and self.user_role != 'can_edit' and self.user_role != 'can_view'):
+            print(f'\n\nuser role can\'t be {self.user_role}\n\n')
+            return False
+        super().save(*args,**kwargs)
+        return True
+
 class Invite(TimeStampedModel):
     class Meta:
         db_table = 'invites'
@@ -65,6 +72,13 @@ class Invite(TimeStampedModel):
         choices=Status_Choices,
         default=Status_Choices.PENDING
     )
+
+    def save(self,*args,**kwargs):
+        if (self.status != 'pending' and self.status != 'accepted' and self.status != 'rejected'):
+            print(f'\n\nINVITE STATUS can\'t be {self.status}\n\n')
+            return False
+        super().save(*args,**kwargs)
+        return True
 
     # checking if the invite still waiting for an action from user
     def valid_invite(self):

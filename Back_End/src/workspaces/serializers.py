@@ -49,7 +49,7 @@ class MembershipSerializer(serializers.ModelSerializer):
             'user_role',
         ]
 
-    def __init__(self, instance=None, data=..., **kwargs):
+    def __init__(self, instance=None, data=serializers.empty, **kwargs):
         super().__init__(instance, data, **kwargs)
 
         if self.context.get('add_user_field' , False):
