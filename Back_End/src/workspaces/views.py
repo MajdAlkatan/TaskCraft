@@ -17,7 +17,7 @@ from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 
 from .permissions import IsMember , IsOwner
 from .models import Workspace , Users_Workspaces , Invite
-from .serializers import WorkspaceSerializer , InviteSerializer
+from .serializers import WorkspaceSerializer , InviteSerializer , MembershipSerializer
 from .filters import WorkspaceFilter
 
 # Create your views here.
@@ -56,7 +56,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         if self.action == 'members' or self.action == 'leave':
             self.permission_classes.append(IsAuthenticated)
             self.permission_classes.append(IsMember)
-        if self.action == 'invite_user' or self.action == 'kick_user':
+        if self.action == 'invite_user' or self.action == 'kick_user' or self.action == 'change_user_role':
             self.permission_classes.append(IsAuthenticated)
             self.permission_classes.append(IsOwner)
         return super().get_permissions()
@@ -75,11 +75,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             qs = qs.filter(owner=self.request.user)
         return qs
 
-    # def get_serializer(self, *args, **kwargs):
-    #     if self.action == 'list':
-    #         return super().get_serializer(context={"do_not_filter_members":True},*args, **kwargs)    
-    #     return super().get_serializer(*args, **kwargs)
-    
+
     # Read
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -160,10 +156,19 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         #TODO: Must delete all tasks he created or he was contributing in. @Ali_Almusfi
         return Response(None , status.HTTP_204_NO_CONTENT)
 
+
+    # Invites
+
     @action(detail=True , methods=['post'] , serializer_class=InviteSerializer)
     def invite_user(self, request , pk):
         if request.data.get('receiver') == request.user.id:
             return Response({"message": "User can not invite himself :) "} , status.HTTP_400_BAD_REQUEST)
+        # checking if the user already a member in the workspace
+        workspace = self.get_object()
+        membership = Users_Workspaces.objects.filter(user_id=request.data.get('receiver') , workspace=workspace)
+        if membership.exists():
+            return Response({"message": "Invitee user in already a member in the workspace specified"} , status.HTTP_400_BAD_REQUEST)
+        
         serializer = self.get_serializer(
             data={
                 "workspace":pk,
@@ -190,3 +195,71 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         membership.delete()
         #TODO: Must delete all tasks he created or he was contributing in. @Ali_Almusfi
         return Response(None , status.HTTP_204_NO_CONTENT)
+    
+    # User_Role
+    @action(detail=True , methods=['patch'] , serializer_class=MembershipSerializer)
+    def change_user_role(self , request , pk):
+        workspace = self.get_object()
+        if 'workspace' in request.data:
+            request.data.pop('workspace') # workspace mustn't be passed to the serializer from request!
+        if not 'user' in request.data:
+            return Response({'user': "user field is required!"} , status.HTTP_400_BAD_REQUEST)
+        if not 'user_role' in request.data:
+            return Response({'user_role': "user_role field is required!"} , status.HTTP_400_BAD_REQUEST)
+        if request.data.get('user_role') == 'owner':
+            return Response({'user_role': "user_role field can't be 'owner'!"} , status.HTTP_400_BAD_REQUEST)
+
+        #TODO validate other data exists in request.data
+        
+        membership = Users_Workspaces.objects.filter(workspace=workspace , user=request.data.get('user'))
+        if not membership.exists(): # "user" must be a member in the workspace
+            return Response({'user': "user specified is not a member in the specified workspace!"} , status.HTTP_400_BAD_REQUEST)
+        membership = membership.get()
+        if membership.user_role == 'owner': # user_role can't be "owner" & owner can't be changed into can_edit or can_view !
+            return Response({'user': "user specified is the owner of the specified workspace!"}, status.HTTP_400_BAD_REQUEST)
+        if membership.user_role == request.data.get('user_role'): # "user_role" can't be the same as the "user" old role ! (performance)
+            return Response({'user_role': "user_role specified is the same as the old user_role! you are changing nothing"}, status.HTTP_400_BAD_REQUEST)
+        membership.user_role = request.data.get('user_role')
+        if not membership.save():
+            return Response({'message': "membership in not saved because user_role you want is not valid!"}, status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(
+            membership,
+            context={
+                'add_workspace_field':True,
+                'add_user_field':True,
+            }
+        )
+        return Response(serializer.data , status.HTTP_202_ACCEPTED)
+        
+        """
+        serializer = self.get_serializer(
+            context={
+                'add_workspace_field':True,
+                'add_user_field':True,
+            },
+            **request.data,
+            workspace=workspace,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data , status.HTTP_202_ACCEPTED)
+        return  Response(serializer.errors , status.HTTP_400_BAD_REQUEST)
+        """
+
+        """
+        PATCH: http://127.0.0.1/api/workspaces/{id}/change_user_role/
+            body:
+                {
+                    "user": 1,
+                    "user_role": "can_edit"
+                }
+            instructions:
+            1. owner can't be changed into can_edit or can_view [Done]
+            2. user_role can't be "owner" [Done]
+            3. "user" must be a member in the workspace [Done]
+            4. "user_role" can't be the same as the "user" old role ! (performance) [Done]
+        """
+
+
+

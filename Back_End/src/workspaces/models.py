@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models import Q
+from datetime import datetime , timedelta
 
 # Create your models here.
-from django.db import models
 
 from tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
 from users.models import User
@@ -49,10 +50,27 @@ class Users_Workspaces(models.Model):
         default= User_Role.CAN_VIEW
     )
 
+    def save(self,*args,**kwargs):
+        if (self.user_role != 'owner' and self.user_role != 'can_edit' and self.user_role != 'can_view'):
+            print(f'\n\nuser role can\'t be {self.user_role}\n\n')
+            return False
+        super().save(*args,**kwargs)
+        return True
+
+
+
+def default_invite_expire_date():
+    return datetime.today() + timedelta(days=7)
 class Invite(TimeStampedModel):
     class Meta:
         db_table = 'invites'
-        unique_together = ['sender' , 'receiver' , 'workspace']
+        constraints=[
+            models.UniqueConstraint(
+                fields=['sender' , 'receiver' , 'workspace'],
+                condition = Q(status='pending'),
+                name='unique_pending_invite'
+            ),
+        ]
     sender = models.ForeignKey(User , related_name='sent_invites' , on_delete=models.CASCADE)
     receiver = models.ForeignKey(User , related_name='received_invites' , on_delete=models.CASCADE)
     workspace = models.ForeignKey(Workspace , related_name='invites' , on_delete=models.CASCADE)
@@ -65,6 +83,14 @@ class Invite(TimeStampedModel):
         choices=Status_Choices,
         default=Status_Choices.PENDING
     )
+    expire_date = models.DateField(default=default_invite_expire_date, editable=False)
+
+    def save(self,*args,**kwargs):
+        if (self.status != 'pending' and self.status != 'accepted' and self.status != 'rejected'):
+            print(f'\n\nINVITE STATUS can\'t be {self.status}\n\n')
+            return False
+        super().save(*args,**kwargs)
+        return True
 
     # checking if the invite still waiting for an action from user
     def valid_invite(self):

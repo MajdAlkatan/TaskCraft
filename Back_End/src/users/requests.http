@@ -58,21 +58,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 }
 
 ###
-PATCH http://127.0.0.1:8000/api/users/change_image/ HTTP/1.1
-Content-Type: multipart/form-data;  boundary=MyBoundary
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Mzk1NTY5LCJpYXQiOjE3NDQzOTE5NjksImp0aSI6IjA1YjAxMDQxNDM3MzQ1NThhMDc0ZDQyNjhjNzRlNGZkIiwidXNlcl9pZCI6Mn0.QdJyvuzVGgTShf8GgAYFAYpmjSvsZD21IvjLZ0R-pGY
+PATCH http://127.0.0.1:8000/api/workspaces/1/change_user_role/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1MDYzNTcwLCJpYXQiOjE3NDUwNTk5NzAsImp0aSI6IjFjM2RiNDUxYmZjYzQzMjViNzJiODRmMWIyODlhMjg5IiwidXNlcl9pZCI6Mn0.5qMgfasYWTbpUMmgTtmySoD9DfRfavdiPkgrJv4xPXg
 
-# must send from postman
---MyBoundary
-Content-Disposition: form-data; name="image"; filename="example.jpg"
-Content-Type: image/jpeg
-
-image=< ../../temp_assets/example.jpg
---MyBoundary
-
+{
+    "user": 5,
+    "user_role": "can_view"
+}
 
 ###
-
 POST http://127.0.0.1:8000/api/workspaces/ HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0Nzk2NzY2LCJpYXQiOjE3NDQ3OTMxNjYsImp0aSI6ImY3OTMwNWRmYWYxNzRiNDFhNjRlYTMxZTJiODI0MDYwIiwidXNlcl9pZCI6MX0.BMA9KWqOEiN2xvMw97mCkSYII4qIgvgI3CXEPyMHV1g
 Content-Type: application/json

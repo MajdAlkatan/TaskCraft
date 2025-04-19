@@ -27,9 +27,13 @@ class InviteSerializer(serializers.ModelSerializer):
             'receiver',
             'workspace',
             'status',
+            'expire_date',
             'created_at',
             'updated_at'
         ]
+        extra_kwargs={
+            'expire_date':{'read_only': True}
+        }
     
     def __init__(self, instance=None, data=serializers.empty, **kwargs):
         super().__init__(instance, data, **kwargs)
@@ -49,7 +53,7 @@ class MembershipSerializer(serializers.ModelSerializer):
             'user_role',
         ]
 
-    def __init__(self, instance=None, data=..., **kwargs):
+    def __init__(self, instance=None, data=serializers.empty, **kwargs):
         super().__init__(instance, data, **kwargs)
 
         if self.context.get('add_user_field' , False):
