@@ -1,5 +1,6 @@
 import React from "react";
-import "./DefulteInput.css"
+import "./DefulteInput.css";
+
 const DefulteInput = ({
   label,
   id,
@@ -7,15 +8,16 @@ const DefulteInput = ({
   value,
   onChange,
   placeholder = "",
-  className = ""
+  className = "",
+  isFileInput = false, // New prop to handle file input
 }) => {
   return (
     <div className="input-container">
       {label && <label htmlFor={id} className="input-label">{label}</label>}
       <input
         id={id}
-        type={type}
-        value={value}
+        type={isFileInput ? "file" : type} // Use file input if isFileInput is true
+        value={isFileInput ? undefined : value} // Prevent value for file input
         onChange={onChange}
         placeholder={placeholder}
         className={`input-field ${className}`}

@@ -10,7 +10,9 @@ import {
   FaCog,
   FaQuestionCircle,
   FaSignOutAlt,
+  FaPlus,
 } from "react-icons/fa";
+import WorkspaceModal from "../../../../Components/WorkspaceModal/WorkspaceModal"; // Import the modal component
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ function Sidebar() {
 
   const [activeMenu, setActiveMenu] = useState(location.pathname);
   const { profile } = useSelector((state) => state.users);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
   useEffect(() => {
     dispatch(fetchUserData());
@@ -34,11 +37,15 @@ function Sidebar() {
     navigate("/login");
   };
 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
     <aside className="sidebar">
       <div className="profile">
         <img
-          src={profile.image }
+          src={profile.image}
           alt="Profile"
           className="profile-img"
         />
@@ -78,12 +85,21 @@ function Sidebar() {
           <FaQuestionCircle className="sidebar-icon" /> Help
         </a>
       </nav>
+      <hr />
+      <div className="new-workspaces">
+        <button onClick={toggleModal} className="new-workspaces-button">
+          <FaPlus className="sidebar-icon" /> New Workspace
+        </button>
+      </div>
 
       <div className="logout">
         <a onClick={handleLogout}>
           <FaSignOutAlt className="sidebar-icon" /> Logout
         </a>
       </div>
+
+      {/* Modal for creating a new workspace */}
+      {isModalOpen && <WorkspaceModal onClose={toggleModal} />}
     </aside>
   );
 }
