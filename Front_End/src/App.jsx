@@ -1,6 +1,12 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useEffect } from 'react';
 import DashBoard from './Layout/DashBoard/DashBoard';
 import MyTask from './Layout/MyTask/MyTask';
 import Header from './Layout/DashBoard/Section/Header/Header';
@@ -9,18 +15,21 @@ import Setting from './Layout/Setting/Setting';
 import Profile from './Layout/Profile/Profile';
 import ChangePassword from './Layout/ChangePassword/ChangePassword';
 import TestNotification from './Layout/Profile/TestNotification';
-import Login from "./Layout/Auth/Login/Login";
-import Register from "./Layout/Auth/Register/Register";
+import Login from './Layout/Auth/Login/Login';
+import Register from './Layout/Auth/Register/Register';
 import HelpSection from './Layout/Help/Help';
 import TaskCategories from './Layout/TaskCategories/TaskCategories';
+import Home from './Layout/Home/Home'; // ✅ Your landing screen
 
 import './App.css';
-import { useEffect } from 'react';
 
-// A wrapper to access the location inside a component
+// A wrapper to apply layout only for internal app pages
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
-  const hideHeaderAndSidebar = location.pathname === "/login" || location.pathname === "/register";
+  const path = location.pathname;
+
+  const hideHeaderAndSidebar =
+    path === '/login' || path === '/register' || path === '/home';
 
   return (
     <>
@@ -34,32 +43,45 @@ const LayoutWrapper = ({ children }) => {
 };
 
 function App() {
-  
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Try refreshing the token every 100 seconds (before 2 min expiry)
       dispatch(refreshToken());
-    }, 100 * 1000); // 100 seconds
+    }, 100 * 1000);
 
-    return () => clearInterval(interval); // Clean up
+    return () => clearInterval(interval);
   }, [dispatch]);
-  const { user } = useSelector((state) => state.auth);
 
   return (
     <Router>
       <LayoutWrapper>
         <Routes>
           {/* Auth Routes */}
-          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/home" /> : <Login />}
+          />
           <Route path="/register" element={<Register />} />
 
-          {/* Redirect root to login or dashboard */}
-          <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
+          {/* Root: Redirect to login or home */}
+          <Route
+            path="/"
+            element={user ? <Navigate to="/home" /> : <Navigate to="/login" />}
+          />
 
-          {/* Protected Routes */}
-          <Route path="/dashboard" element={user ? <DashBoard /> : <Navigate to="/login" />} />
+          {/* ✅ Landing/Home page (first after login) */}
+          <Route
+            path="/home"
+            element={user ? <Home /> : <Navigate to="/login" />}
+          />
+
+          {/* Protected internal pages */}
+          <Route
+            path="/dashboard"
+            element={user ? <DashBoard /> : <Navigate to="/login" />}
+          />
           <Route path="/mytask" element={<MyTask />} />
           <Route path="/settings" element={<Setting />} />
           <Route path="/profile" element={<Profile />} />
