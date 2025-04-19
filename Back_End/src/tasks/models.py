@@ -101,8 +101,8 @@ class workspace_category_option(models.Model):
     class Meta:
         db_table = "workspace_category_option"
     workspace = models.ForeignKey(Workspace , on_delete = models.CASCADE)
-    task_category = models.ForeignKey(Task_Category , on_delete = models.CASCADE )
-    category_option = models.ForeignKey(Category_Option , on_delete = models.CASCADE, related_name = 'options' , null=True,blank=True)
+    task_category = models.ForeignKey(Task_Category , on_delete = models.CASCADE , related_name = 'options')
+    category_option = models.ForeignKey(Category_Option , on_delete = models.CASCADE , null=True,blank=True)
     class Meta:
         unique_together = [
             ('workspace', 'task_category'),  # Workspace-Category relationship
