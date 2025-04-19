@@ -1,24 +1,52 @@
-import React, { useState } from 'react';
-import DefulteInput from '../../Components/Input/DefulteInput/DefulteInput'; // Adjust the import path as necessary
-import './ChangePassword.css'; // Import the CSS file for styles
-import FormButton from "../../Components/Button/FormButton/FormButton"
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updatePassword, clearPasswordStatus } from '../../store/reducers/changepasswordSlice';
+import { logoutUser } from '../../store/reducers/authReducer';
+
+import DefulteInput from '../../Components/Input/DefulteInput/DefulteInput';
+import FormButton from "../../Components/Button/FormButton/FormButton";
+import './ChangePassword.css';
+
 function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const dispatch = useDispatch();
+  const { success, error } = useSelector(state => state.changePassword);
+
+  useEffect(() => {
+    if (success) {
+      alert("Password changed successfully. You will be logged out in 5 minutes. Click OK to logout now.");
+      const timeout = setTimeout(() => {
+        dispatch(logoutUser());
+        window.location.href = '/login'; // Or navigate with react-router
+      }, 5 * 60 * 1000); // 5 minutes
+      
+      // Optional: logout immediately if user clicks confirm
+      if (window.confirm("Logout now? Click 'OK' or wait 5 minutes.")) {
+        clearTimeout(timeout);
+        dispatch(logoutUser());
+        window.location.href = '/login';
+      }
+    }
+    return () => dispatch(clearPasswordStatus());
+  }, [success, dispatch]);
+
   const handleChangePassword = (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (newPassword !== confirmPassword) {
-      console.error('New password and confirm password do not match.');
+      alert('New password and confirm password do not match.');
       return;
     }
 
-    console.log('Current Password:', currentPassword);
-    console.log('New Password:', newPassword);
-    // Here you would typically send the data to your backend for processing
+    const passData = {
+      old_password: currentPassword,
+      new_password: newPassword,
+    };
+
+    dispatch(updatePassword(passData));
   };
 
   return (
@@ -30,9 +58,11 @@ function ChangePassword() {
           <p>sundargurung360@gmail.com</p>
         </div>
       </div>
+
       <div className="change-password-section">
         <form onSubmit={handleChangePassword}>
           <DefulteInput
+           placeholder='enter old password'
             label="Current Password"
             id="current-password"
             type="password"
@@ -41,6 +71,7 @@ function ChangePassword() {
             required
           />
           <DefulteInput
+          placeholder='enter new password'
             label="New Password"
             id="new-password"
             type="password"
@@ -49,6 +80,7 @@ function ChangePassword() {
             required
           />
           <DefulteInput
+          placeholder='enter confirm password'
             label="Confirm New Password"
             id="confirm-password"
             type="password"
@@ -56,9 +88,12 @@ function ChangePassword() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
+
+          {error && <p style={{ color: 'red', marginTop: 10 }}>{JSON.stringify(error)}</p>}
+
           <div className="btn-changepassword">
             <FormButton type="submit" label='Change password' />
-            <FormButton type="" label='cancle' />
+            <FormButton type="button" label='Cancel' onClick={() => window.history.back()} />
           </div>
         </form>
       </div>
