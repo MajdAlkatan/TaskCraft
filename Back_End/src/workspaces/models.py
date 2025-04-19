@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Q
 from datetime import datetime , timedelta
 
+import uuid
 # Create your models here.
 
 from tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
@@ -29,6 +30,7 @@ class Workspace(TimeStampedModel):
         through_fields=("workspace", "user"),
         related_name='workspaces'
     )
+    code = models.UUIDField(default=uuid.uuid4 , unique=True , editable=False)
 
     def __str__(self):
         return self.name
