@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Workspace , Users_Workspaces , Invite
+from .models import Workspace , Users_Workspaces , Invite , Workspace_Invitation
 
 # from src.Users.serializer import UserSerializer
 from users.models import User
@@ -100,7 +100,14 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         user_workspaces = Workspace.objects.filter(owner_id=self.context['request'].user)
         if len(user_workspaces) > 9: # there is 10 or more workspaces that this user owns
             raise serializers.ValidationError(f'User {self.context['request'].user.id} has reached the allowed limit of workspaces count !')
-        return super().create(validated_data)
+        instance = super().create(validated_data)
+        Users_Workspaces.objects.create(
+            workspace=instance,
+            user=self.context['request'].user,
+            user_role = 'owner'
+        )
+        #TODO: implement soft create for the main task_categories
+        return instance
 
     def update(self, instance, validated_data):
         if not Users_Workspaces.objects.filter(
@@ -121,3 +128,16 @@ class WorkspaceSerializer(serializers.ModelSerializer):
                     filtered_members.append(member)
             data['members'] = filtered_members
         return data
+    
+
+class WorkspaceInvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Workspace_Invitation
+        fields = [
+            'id',
+            'workspace',
+            'token',
+            'link',
+            'expires_at',
+            'valid'
+        ]
