@@ -134,6 +134,9 @@ class TaskSerializer(serializers.ModelSerializer):
             'items',
             'users_task',
         )
+
+        
+
         # extra_kwargs = {
         #     'image': {'required': False}
         # }
@@ -237,10 +240,28 @@ class WorkspaceCategoryAssignmentSerializer(serializers.Serializer):
     )
     name = serializers.CharField(max_length=20)
 
+    def validate_name(self, value):
+        return value.lower() 
+
     def create(self, validated_data):
         workspace = validated_data.pop('workspace')
-        
-        category = Task_Category.objects.create(**validated_data)
+        name = self.validate_name(validated_data['name'])
+
+        # if  Task_Category.objects.filter(name = self.name).exists():
+        #     category = Task_Category.objects.get(name = self.name)
+        #     workspace_category_option.objects.create(
+        #         workspace=workspace,
+        #         task_category=category,
+        #         category_option=None
+        #     )
+        #     return category
+
+        try:
+            category = Task_Category.objects.get(name__iexact=name)
+        except Task_Category.DoesNotExist:
+            category = Task_Category.objects.create(**validated_data)
+            
+
         
         workspace_category_option.objects.create(
             workspace=workspace,
@@ -290,36 +311,55 @@ class WorkspaceCategoryOptionAssignmentSerializer(serializers.Serializer):
         
         created_options = []
 
-        assignment, created = workspace_category_option.objects.get_or_create(
-            workspace=workspace,
-            task_category=task_category,
-            defaults={'category_option': None}
-        )
+        # assignment, created = workspace_category_option.objects.get_or_create(
+        #     workspace=workspace,
+        #     task_category=task_category,
+        #     defaults={'category_option': None}
+        # )
         
-        for option_data in options_data:
+        # for option_data in options_data:
             
-            option = Category_Option.objects.create(**option_data)
+        #     option = Category_Option.objects.create(**option_data)
             
 
+        #     workspace_category_option.objects.update_or_create(
+        #         workspace=workspace,
+        #         task_category=task_category,
+        #         category_option=None,
+        #         defaults={'category_option': option}
+        #     )
+            
+        #     created_options.append(option)
+        
+
+        for option_data in options_data:
+        
+            option_name = option_data.get('name', '').strip().lower()
+            
+            
+            option, created = Category_Option.objects.get_or_create(
+                name__iexact=option_name,
+                task_category=task_category,
+                defaults=option_data
+            )
+            
+            
             workspace_category_option.objects.update_or_create(
                 workspace=workspace,
                 task_category=task_category,
-                category_option=None,
-                defaults={'category_option': option}
+                category_option=option,
+                defaults={}  
             )
             
             created_options.append(option)
-        
+
         return {
             'workspace_id': workspace.id,
             'task_category_id': task_category.id,
             'options': created_options
         }
     
-    # def update(self, instance, validated_data):
-    #     instance.name = validated_data.get('name', instance.name)
-    #     instance.save()
-    #     return instance
+
 
     def to_representation(self, instance):
         return {
