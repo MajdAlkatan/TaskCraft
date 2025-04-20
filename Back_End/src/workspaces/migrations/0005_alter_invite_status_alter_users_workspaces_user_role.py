@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('workspaces', '0004_alter_invite_status_alter_users_workspaces_user_role'),
+        ('workspaces', '0004_alter_users_workspaces_user_role_and_more'),
     ]
 
     operations = [

@@ -14,7 +14,7 @@ def generate_unique_uuids(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('workspaces', '0007_alter_invite_unique_together_and_more'),
+        ('workspaces', '0008_add_workspace_code_field'),
     ]
 
     operations = [

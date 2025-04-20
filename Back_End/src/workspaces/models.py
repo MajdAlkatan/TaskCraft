@@ -65,7 +65,8 @@ class Users_Workspaces(models.Model):
 
 
 def default_invite_expire_date():
-    return timezone.today() + timezone.timedelta(days=7)
+    from datetime import datetime
+    return timezone.make_aware(datetime.today()) + timezone.timedelta(days=7)
 class Invite(TimeStampedModel):
     class Meta:
         db_table = 'invites'
