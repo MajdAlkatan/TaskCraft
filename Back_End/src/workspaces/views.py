@@ -365,7 +365,7 @@ class JoinWorkspaceViaInvitationLink(APIView):
             user_role= 'can_view'
         )
 
-        serializer = self.get_serializer(
+        serializer = MembershipSerializer(
             membership,
             context={
                 'add_workspace_field':True,
