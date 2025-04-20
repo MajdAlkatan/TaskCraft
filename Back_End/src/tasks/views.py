@@ -35,6 +35,34 @@ class TaskViewSet(viewsets.ModelViewSet):
     ordering_fields = ['title']
 
 
+    def update_outdated_status(self, task):
+        if task.end_date:
+            new_status = task.is_outdated()
+            if task.out_dated != new_status:
+                task.out_dated = new_status
+                task.save(update_fields=['out_dated'])
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.update_outdated_status(instance)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        
+        for task in queryset:
+            self.update_outdated_status(task)
+            
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
     
 
     # def get_permissions(self):
@@ -51,10 +79,19 @@ class TaskViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         qs = super().get_queryset()
+        workspace_id = self.request.get('workspace_id')
+
+        if workspace_id:
+            qs = qs.filter(workspace_id=workspace_id)
+
         if 'HTTP_AUTHORIZATION' in self.request.META:
             if not self.request.user.is_staff:
-                qs = qs.filter(owner = self.request.user.workspace)
-                # TODO 
+                qs = qs.filter(
+                    workspace=self.request.user.workspace,
+                    # owner=self.request.user
+                )
+                # qs = qs.filter(owner = self.request.user.workspace)
+                # 
                 # qs = qs.filter(user = self.request.user)
         return qs
     
@@ -89,6 +126,15 @@ class CategoryOptionsViewSet(viewsets.ModelViewSet):
         IsAuthenticated,
         # IsCliet, TODO
     ]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if 'HTTP_AUTHORIZATION' in self.request.META:
+            if not self.request.user.is_staff:
+                # Filter by workspace - adjust field names based on your actual model
+                user_workspace = self.request.user.workspace
+                qs = qs.filter(workspace=user_workspace)
+        return qs
 
     # def get_serializer_class(self):
     #     # can also check if POST: if self.request.method == 'POST
