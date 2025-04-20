@@ -4,9 +4,13 @@ from django.shortcuts import render
 from django.core import exceptions
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.core.signing import TimestampSigner , SignatureExpired , BadSignature
+
+from datetime import datetime
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets , status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -16,9 +20,10 @@ from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 # from users.permissions import IsClient
 
 from .permissions import IsMember , IsOwner
-from .models import Workspace , Users_Workspaces , Invite
-from .serializers import WorkspaceSerializer , InviteSerializer , MembershipSerializer
+from .models import Workspace , Users_Workspaces , Invite , Workspace_Invitation
+from .serializers import WorkspaceSerializer , InviteSerializer , MembershipSerializer , WorkspaceInvitationSerializer
 from .filters import WorkspaceFilter
+from .utils.crypto import Crypto
 
 # Create your views here.
 
@@ -262,4 +267,109 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         """
 
 
+# Workspace-Invitations
+
+def is_invitation_valid(expires_at , token):
+    if (expires_at > datetime.now()):
+        return False
+    signer = TimestampSigner()
+    try:
+        original = signer.unsign(token , max_age=(60*60*24))
+        return True
+    except SignatureExpired:
+        return False
+    except BadSignature:
+        return False
+
+
+class CreateWorkspaceInvitationLink(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, workspace_id):
+        # make sure workspace exists
+        workspace = Workspace.objects.filter(id=workspace_id)
+        if not workspace.exists():
+            return Response({"workspace_id": "workspace specified is not exists!"} , status.HTTP_404_NOT_FOUND)
+        # get the workspace
+        workspace = workspace.get()
+        
+        # check if there is already a valid invitation for the specified workspace
+        old_invitation = Workspace_Invitation.objects.filter(workspace=workspace , valid=True)
+        if old_invitation.exists():
+            old_invitation = old_invitation.get()
+            if is_invitation_valid(old_invitation.expires_at , old_invitation.token):
+                return Response({"message": "there is already a valid invitation for this workspace! (use the Get-Workspace-Invitation-Link)"} , status.HTTP_400_BAD_REQUEST)
+            else:
+                old_invitation.valid = False
+                old_invitation.save() #TODO make sure this is working
+        
+        # create invitation
+        invitation = Workspace_Invitation.objects.create(workspace=workspace)
+
+        return Response({"link":invitation.link} , status.HTTP_201_CREATED)
+    
+class GetWorkspaceInvitationLink(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self , workspace_id):
+        # make sure workspace exists
+        workspace = Workspace.objects.filter(id=workspace_id)
+        if not workspace.exists():
+            return Response({"workspace_id": "workspace specified is not exists!"} , status.HTTP_404_NOT_FOUND)
+        # get the workspace
+        workspace = workspace.get()
+
+        # check if there is already a valid invitation for the specified workspace
+        invitation = Workspace_Invitation.objects.filter(workspace=workspace , valid=True)
+        if not invitation.exists():
+            return Response({"invitation": "there is no invitation for this workspace or the old one has been expired! Please create a new invitation link using the create-invitation-link endpoint"} , status.HTTP_404_NOT_FOUND)
+        # getting invitation
+        invitation = invitation.get()
+
+        if not is_invitation_valid(invitation.expires_at , invitation.token):
+            invitation.valid = False
+            invitation.save() #TODO: make sure this is working
+            return Response({"invitation": "invitation has been expired! Please create a new invitation link using the create-invitation-link endpoint"} , status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"link": invitation.link} , status.HTTP_200_OK)
+        
+
+class JoinWorkspaceViaInvitationLink(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request , invitation_token):
+
+        # Decrypting token
+        crypto = Crypto()
+        try:
+            token = crypto.decrypt(invitation_token)
+        except Exception as e:
+            return Response({"message": "Decryption failed"}, status.HTTP_400_BAD_REQUEST)
+        
+        
+        # check if the token correct and the invitation exists
+        invitation = Workspace_Invitation.objects.filter(token=token)
+        if not invitation.exists():
+            return Response({"invitation_token": "there is no invitation for this workspace!"} , status.HTTP_404_NOT_FOUND)
+        # getting invitation
+        invitation = invitation.get()
+
+        if not is_invitation_valid(invitation.expires_at , invitation.token):
+            invitation.valid = False
+            invitation.save() #TODO: make sure this is working
+            return Response({"invitation": "invitation has been expired! Please create a new invitation link using the create-invitation-link endpoint"} , status.HTTP_400_BAD_REQUEST)
+
+        membership = Users_Workspaces.objects.create(
+            workspace=invitation.workspace,
+            user=request.user,
+            user_role= 'can_view'
+        )
+
+        serializer = self.get_serializer(
+            membership,
+            context={
+                'add_workspace_field':True,
+                'add_user_field':True,
+            }
+        )
+        return Response(serializer.data , status.HTTP_201_CREATED)
+
+        
 

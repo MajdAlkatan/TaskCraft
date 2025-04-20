@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.core.signing import TimestampSigner
+from django.conf import settings
 from datetime import datetime , timedelta
 
 import uuid
@@ -8,6 +9,7 @@ import uuid
 
 from tools.tools import TimeStampedModel #auto insert the created_at & updated_at fields
 from users.models import User
+from .utils.crypto import Crypto
 
 # Create your models here.
 def workspace_image_upload_path(instance , filename):
@@ -142,9 +144,14 @@ class Workspace_Invitation(TimeStampedModel):
             print(f'\n\nTHIS WORKSPACE ALREADY HAVE AN INVITATION LINK!\n\n')
             raise Exception("THIS WORKSPACE ALREADY HAVE AN INVITATION LINK!")
 
+        ###################################################################################
         self.token = self.create_invitation_token()
+        # Encrypt token before creating the link and put the encrypted one in the link
+        crypto = Crypto()
+        encrypted_token = crypto.encrypt(str(self.token))
+        self.link = f'{settings.BASE_URL}/invite-link/{encrypted_token}/lets-join/'
+        ###################################################################################
         self.expires_at = workspace_invitation_expiring_date_time()
-
         return super().save(*args , **kwargs)
 
 
