@@ -98,15 +98,16 @@ class Invite(TimeStampedModel):
             print(f'\n\nINVITE STATUS can\'t be {self.status}\n\n')
             return False
         
-        #instead of the unique constraint for status='pending'
-        if Invite.objects.filter(
-            sender=kwargs['sender'],
-            receiver=kwargs['receiver'],
-            workspace=kwargs['workspace'],
-            status='pending'
-        ).exists:
-            print(f'\n\nTHIS INVITE ALREADY EXISTS!\n\n')
-            raise Exception("THIS INVITE ALREADY EXISTS!")
+        if not self.id:
+            #instead of the unique constraint for status='pending'
+            if Invite.objects.filter(
+                sender=kwargs['sender'],
+                receiver=kwargs['receiver'],
+                workspace=kwargs['workspace'],
+                status='pending'
+            ).exists:
+                print(f'\n\nTHIS INVITE ALREADY EXISTS!\n\n')
+                raise Exception("THIS INVITE ALREADY EXISTS!")
 
 
         super().save(*args,**kwargs)
