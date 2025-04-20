@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Q
+from django.core.signing import TimestampSigner
 from datetime import datetime , timedelta
 
 import uuid
@@ -66,6 +67,7 @@ def default_invite_expire_date():
 class Invite(TimeStampedModel):
     class Meta:
         db_table = 'invites'
+        """
         constraints=[
             models.UniqueConstraint(
                 fields=['sender' , 'receiver' , 'workspace'],
@@ -73,6 +75,7 @@ class Invite(TimeStampedModel):
                 name='unique_pending_invite'
             ),
         ]
+        """
     sender = models.ForeignKey(User , related_name='sent_invites' , on_delete=models.CASCADE)
     receiver = models.ForeignKey(User , related_name='received_invites' , on_delete=models.CASCADE)
     workspace = models.ForeignKey(Workspace , related_name='invites' , on_delete=models.CASCADE)
@@ -88,9 +91,22 @@ class Invite(TimeStampedModel):
     expire_date = models.DateField(default=default_invite_expire_date, editable=False)
 
     def save(self,*args,**kwargs):
+        
         if (self.status != 'pending' and self.status != 'accepted' and self.status != 'rejected'):
             print(f'\n\nINVITE STATUS can\'t be {self.status}\n\n')
             return False
+        
+        #instead of the unique constraint for status='pending'
+        if Invite.objects.filter(
+            sender=kwargs['sender'],
+            receiver=kwargs['receiver'],
+            workspace=kwargs['workspace'],
+            status='pending'
+        ).exists:
+            print(f'\n\nTHIS INVITE ALREADY EXISTS!\n\n')
+            raise Exception("THIS INVITE ALREADY EXISTS!")
+
+
         super().save(*args,**kwargs)
         return True
 
@@ -102,3 +118,44 @@ class Invite(TimeStampedModel):
 
     def __str__(self):
         return f"user {self.sender.fullname} sent an invite to user {self.receiver.fullname} into the workspace {self.workspace.name}"
+    
+
+def workspace_invitation_expiring_date_time():
+    return datetime.now() + timedelta(hours=24)
+class Workspace_Invitation(TimeStampedModel):
+    class Meta:
+        db_table='workspace_invitations'
+    
+    workspace = models.ForeignKey(Workspace , on_delete=models.CASCADE , related_name='invitation_links')
+    token = models.CharField(max_length=255, unique=True , editable=False)
+    link = models.CharField(max_length=255 , unique=True)
+    expires_at = models.DateTimeField(editable=False)
+    valid = models.BooleanField(default=False)
+
+
+    def save(self, *args , **kwargs):
+        #instead of the unique constraint for valid=True
+        if Workspace_Invitation.objects.filter(
+            workspace = kwargs['workspace'],
+            valid=True
+        ).exists:
+            print(f'\n\nTHIS WORKSPACE ALREADY HAVE AN INVITATION LINK!\n\n')
+            raise Exception("THIS WORKSPACE ALREADY HAVE AN INVITATION LINK!")
+
+        self.token = self.create_invitation_token()
+        self.expires_at = workspace_invitation_expiring_date_time()
+
+        return super().save(*args , **kwargs)
+
+
+    def create_invitation_token(self):
+        workspace = Workspace.objects.filter(id = self.workspace).first()
+        signer = TimestampSigner()
+        return signer.sign(str(workspace.code))
+
+
+    def did_expired(self):
+        return (self.expires_at > datetime.now())
+
+    def __str__(self):
+        return f'invitation-link [{self.link}] for workspace [{self.workspace}] by token [{self.token}], expires_at [{self.expires_at}]'

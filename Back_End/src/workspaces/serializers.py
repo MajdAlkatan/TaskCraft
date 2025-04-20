@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Workspace , Users_Workspaces , Invite
+from .models import Workspace , Users_Workspaces , Invite , Workspace_Invitation
 
 # from src.Users.serializer import UserSerializer
 from users.models import User
@@ -121,3 +121,16 @@ class WorkspaceSerializer(serializers.ModelSerializer):
                     filtered_members.append(member)
             data['members'] = filtered_members
         return data
+    
+
+class WorkspaceInvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Workspace_Invitation
+        fields = [
+            'id',
+            'workspace',
+            'token',
+            'link',
+            'expires_at',
+            'valid'
+        ]
