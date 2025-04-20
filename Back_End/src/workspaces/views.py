@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.core.signing import TimestampSigner , SignatureExpired , BadSignature
 
-from datetime import datetime
+from django.utils import timezone
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets , status
@@ -270,20 +270,23 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
 # Workspace-Invitations
 
 def is_invitation_valid(expires_at , token):
-    if (expires_at > datetime.now()):
+    if (expires_at < timezone.now()):
+        print(f'\n\n\nexpires_at > timezone.now()\n\n\n')
         return False
     signer = TimestampSigner()
     try:
         original = signer.unsign(token , max_age=(60*60*24))
         return True
     except SignatureExpired:
+        print(f'\n\n\nSignatureExpired\n\n\n')
         return False
     except BadSignature:
+        print(f'\n\n\nBadSignature\n\n\n')
         return False
 
 
 class CreateWorkspaceInvitationLink(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsMember]
     def post(self, request, workspace_id):
         # make sure workspace exists
         workspace = Workspace.objects.filter(id=workspace_id)
@@ -300,7 +303,7 @@ class CreateWorkspaceInvitationLink(APIView):
                 return Response({"message": "there is already a valid invitation for this workspace! (use the Get-Workspace-Invitation-Link)"} , status.HTTP_400_BAD_REQUEST)
             else:
                 old_invitation.valid = False
-                old_invitation.save() #TODO make sure this is working
+                old_invitation.save()
         
         # create invitation
         invitation = Workspace_Invitation.objects.create(workspace=workspace)
@@ -308,8 +311,8 @@ class CreateWorkspaceInvitationLink(APIView):
         return Response({"link":invitation.link} , status.HTTP_201_CREATED)
     
 class GetWorkspaceInvitationLink(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self , workspace_id):
+    permission_classes = [IsAuthenticated , IsMember]
+    def get(self , request ,workspace_id):
         # make sure workspace exists
         workspace = Workspace.objects.filter(id=workspace_id)
         if not workspace.exists():

@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Q
 from django.core.signing import TimestampSigner
 from django.conf import settings
-from datetime import datetime , timedelta
+from django.utils import timezone
 
 import uuid
 # Create your models here.
@@ -65,7 +65,7 @@ class Users_Workspaces(models.Model):
 
 
 def default_invite_expire_date():
-    return datetime.today() + timedelta(days=7)
+    return timezone.today() + timezone.timedelta(days=7)
 class Invite(TimeStampedModel):
     class Meta:
         db_table = 'invites'
@@ -124,7 +124,7 @@ class Invite(TimeStampedModel):
     
 
 def workspace_invitation_expiring_date_time():
-    return datetime.now() + timedelta(hours=24)
+    return timezone.now() + timezone.timedelta(hours=24)
 class Workspace_Invitation(TimeStampedModel):
     class Meta:
         db_table='workspace_invitations'
@@ -133,19 +133,22 @@ class Workspace_Invitation(TimeStampedModel):
     token = models.CharField(max_length=255, unique=True , editable=False)
     link = models.CharField(max_length=255 , unique=True)
     expires_at = models.DateTimeField(editable=False)
-    valid = models.BooleanField(default=False)
+    valid = models.BooleanField(default=True)
 
 
     def save(self, *args , **kwargs):
         if not self.id:
+            # Check if workspace is set
+            if not hasattr(self, 'workspace') or not self.workspace:
+                raise ValueError("Workspace must be set before saving")
             #instead of the unique constraint for valid=True
             if Workspace_Invitation.objects.filter(
-                workspace = kwargs['workspace'],
+                workspace = self.workspace,
                 valid=True
             ).exists():
                 print(f'\n\nTHIS WORKSPACE ALREADY HAVE AN INVITATION LINK!\n\n')
                 raise Exception("THIS WORKSPACE ALREADY HAVE AN INVITATION LINK!")
-        
+            
             self.token = self.create_invitation_token()
             # Encrypt token before creating the link and put the encrypted one in the link
             crypto = Crypto()
@@ -156,13 +159,13 @@ class Workspace_Invitation(TimeStampedModel):
 
 
     def create_invitation_token(self):
-        workspace = Workspace.objects.filter(id = self.workspace).first()
+        workspace = Workspace.objects.filter(id = self.workspace.id).first()
         signer = TimestampSigner()
         return signer.sign(str(workspace.code))
 
 
     def did_expired(self):
-        return (self.expires_at > datetime.now())
+        return (self.expires_at < timezone.now())
 
     def __str__(self):
         return f'invitation-link [{self.link}] for workspace [{self.workspace}] by token [{self.token}], expires_at [{self.expires_at}]'

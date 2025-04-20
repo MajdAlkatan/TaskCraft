@@ -10,6 +10,8 @@ class IsOwner(permissions.BasePermission):
 
         if not workspace_id:
             workspace_id = request.data.get('workspace_id')
+            if not workspace_id:
+                workspace_id = view.kwargs.get('workspace_id')
 
         return Workspace.objects.filter(
             owner=request.user,
@@ -25,6 +27,8 @@ class IsMember(permissions.BasePermission):
 
         if not workspace_id:
             workspace_id = request.data.get('workspace_id')
+            if not workspace_id:
+                workspace_id = view.kwargs.get('workspace_id')
 
         print(f'\n\n{workspace_id}\n\n')
         
@@ -42,6 +46,8 @@ class CanEdit(permissions.BasePermission):
 
         if not workspace_id:
             workspace_id = request.data.get('workspace_id')
+            if not workspace_id:
+                workspace_id = view.kwargs.get('workspace_id')
         
         membership = Users_Workspaces.objects.filter(user=request.user, workspace_id=workspace_id)
         if membership.exists():
