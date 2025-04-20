@@ -100,7 +100,13 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         user_workspaces = Workspace.objects.filter(owner_id=self.context['request'].user)
         if len(user_workspaces) > 9: # there is 10 or more workspaces that this user owns
             raise serializers.ValidationError(f'User {self.context['request'].user.id} has reached the allowed limit of workspaces count !')
+        
+        image = validated_data.pop('image')
         instance = super().create(validated_data)
+        
+        instance.image = image
+        instance.save()
+        
         Users_Workspaces.objects.create(
             workspace=instance,
             user=self.context['request'].user,
