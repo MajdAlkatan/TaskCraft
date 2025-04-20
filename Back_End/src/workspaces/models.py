@@ -136,22 +136,21 @@ class Workspace_Invitation(TimeStampedModel):
 
 
     def save(self, *args , **kwargs):
-        #instead of the unique constraint for valid=True
-        if Workspace_Invitation.objects.filter(
-            workspace = kwargs['workspace'],
-            valid=True
-        ).exists:
-            print(f'\n\nTHIS WORKSPACE ALREADY HAVE AN INVITATION LINK!\n\n')
-            raise Exception("THIS WORKSPACE ALREADY HAVE AN INVITATION LINK!")
-
-        ###################################################################################
-        self.token = self.create_invitation_token()
-        # Encrypt token before creating the link and put the encrypted one in the link
-        crypto = Crypto()
-        encrypted_token = crypto.encrypt(str(self.token))
-        self.link = f'{settings.BASE_URL}/invite-link/{encrypted_token}/lets-join/'
-        ###################################################################################
-        self.expires_at = workspace_invitation_expiring_date_time()
+        if not self.id:
+            #instead of the unique constraint for valid=True
+            if Workspace_Invitation.objects.filter(
+                workspace = kwargs['workspace'],
+                valid=True
+            ).exists():
+                print(f'\n\nTHIS WORKSPACE ALREADY HAVE AN INVITATION LINK!\n\n')
+                raise Exception("THIS WORKSPACE ALREADY HAVE AN INVITATION LINK!")
+        
+            self.token = self.create_invitation_token()
+            # Encrypt token before creating the link and put the encrypted one in the link
+            crypto = Crypto()
+            encrypted_token = crypto.encrypt(str(self.token))
+            self.link = f'{settings.BASE_URL}/invite-link/{encrypted_token}/lets-join/'
+            self.expires_at = workspace_invitation_expiring_date_time()
         return super().save(*args , **kwargs)
 
 
