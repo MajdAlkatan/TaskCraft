@@ -395,10 +395,33 @@ class UpdateCategoryOptionSerializer(serializers.Serializer):
                 )
             return data
 
+        def validate_name(self, value):
+            return value.lower() 
+
+
         def update(self, instance, validated_data):
-            instance.name = validated_data.get('name', instance.name)
-            instance.save()
-            return instance
+            validated_data['name'] = self.validate_name(validated_data['name'])
+
+            existing_option = Category_Option.objects.filter(name__iexact=validated_data['name']).first()
+            if existing_option and existing_option.id !=instance.id:
+                connections = workspace_category_option.objects.filter(workspace = instance.workspace , task_category=instance.task_category , option = instance.option)
+                for connection in connections:
+                    connection.update(task_category = existing_option)
+                return existing_option
+            else:
+                options = Category_Option.objects.create(**validated_data)
+                for option in options:
+
+                    workspace_category_option.objects.update(
+                        workspace=instance.workspace,
+                        task_category=instance.category,
+                        category_Option = option
+                    )
+            return options
+
+            # instance.name = validated_data.get('name', instance.name)
+            # instance.save()
+            # return instance
 
         def to_representation(self, instance):
             return {
@@ -431,11 +454,32 @@ class UpdateTaskCategorySerializer(serializers.Serializer):
             )
         return data
 
+    def validate_name(self, value):
+        return value.lower() 
+
     def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
+        validated_data['name'] = self.validate_name(validated_data['name'])
+
         
-        instance.save()
-        return instance
+        existing_category = Task_Category.objects.filter(name__iexact=validated_data['name']).first()
+        if existing_category and existing_category.id !=instance.id:
+        
+            connections = workspace_category_option.objects.filter(workspace = instance.workspace , task_category=instance.task_category)
+            for connection in connections:
+                connection.update(task_category = existing_category)
+            return existing_category
+        else:
+            categories = Task_Category.objects.create(**validated_data)
+            for category in categories:
+                workspace_category_option.objects.update(
+                    workspace=instance.workspace,
+                    task_category=category
+                )
+            return category
+
+        # instance.name = validated_data.get('name', instance.name)
+        # instance.save()
+        # return instance
 
     def to_representation(self, instance):
         return {
