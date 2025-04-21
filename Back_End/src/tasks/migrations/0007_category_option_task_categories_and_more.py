@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('tasks', '0006_task_workspace'),
-        ('workspaces', '0003_alter_users_workspaces_user_role_and_more'),
+        ('workspaces', '0004_alter_users_workspaces_user_role_and_more'),
     ]
 
     operations = [
