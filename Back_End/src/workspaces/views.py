@@ -72,8 +72,8 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
                 if not self.request.user.is_staff:
                     qs = Workspace.objects.filter(
-                        Q(members__user=self.request.user)|
-                        Q(owner=self.request.user)
+                        Q(members__user=self.request.user)
+                        # |Q(owner=self.request.user)
                     )
                     # normal user can view and update only his own info
         if self.action == 'owned':
