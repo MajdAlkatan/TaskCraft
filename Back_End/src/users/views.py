@@ -145,13 +145,12 @@ class UserViewSet(viewsets.ModelViewSet):
                 invite.delete()
             else:
                 filtered_data.append(invite_item)
-        serializer.data = filtered_data
         
         
         return Response(
             {
                 "receiver_id":request.user.id,
-                "invites":serializer.data
+                "invites":filtered_data
             },
             status.HTTP_200_OK
         )
@@ -176,13 +175,12 @@ class UserViewSet(viewsets.ModelViewSet):
                 invite.delete()
             else:
                 filtered_data.append(invite_item)
-        serializer.data = filtered_data
         
         
         return Response(
             {
                 "sender_id":request.user.id,
-                "invites":serializer.data
+                "invites":filtered_data
             },
             status.HTTP_200_OK
         )
