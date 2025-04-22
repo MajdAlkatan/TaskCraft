@@ -102,9 +102,9 @@ class Invite(TimeStampedModel):
         if not self.id:
             #instead of the unique constraint for status='pending'
             if Invite.objects.filter(
-                sender=kwargs['sender'],
-                receiver=kwargs['receiver'],
-                workspace=kwargs['workspace'],
+                sender=self.sender,
+                receiver=self.receiver,
+                workspace=self.workspace,
                 status='pending'
             ).exists:
                 print(f'\n\nTHIS INVITE ALREADY EXISTS!\n\n')
