@@ -132,11 +132,11 @@ class tasks_task_categories(models.Model):
 class workspace_category_option(models.Model):
     class Meta:
         db_table = "workspace_category_option"
+        unique_together = [
+            # ('workspace', 'task_category'),  # Workspace-Category relationship
+            # ('workspace', 'task_category', 'category_option')  # Workspace-Category-Option relationship
+        ]
     workspace = models.ForeignKey(Workspace , on_delete = models.CASCADE)
     task_category = models.ForeignKey(Task_Category , on_delete = models.CASCADE , related_name = 'options')
     category_option = models.ForeignKey(Category_Option , on_delete = models.CASCADE , null=True,blank=True)
-    class Meta:
-        unique_together = [
-            ('workspace', 'task_category'),  # Workspace-Category relationship
-            ('workspace', 'task_category', 'category_option')  # Workspace-Category-Option relationship
-        ]
+    

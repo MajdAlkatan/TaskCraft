@@ -5,9 +5,10 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated , IsAdminUser , AllowAny
-from .models import Task , Category_Option , Task_Category , workspace_category_option
+from .models import Task , Category_Option , Task_Category , workspace_category_option ,users_tasks
 from .serializer import TaskSerializer , TaskCreateSerializer , CategoryOptionSerializer  ,TaskCategorySerializer , ChangeImageSerializer , WorkspaceCategoryAssignmentSerializer , WorkspaceCategoryOptionAssignmentSerializer , UpdateCategoryOptionSerializer , UpdateTaskCategorySerializer
 from .filter import TaskFilter
+from workspaces.models import Users_Workspaces
 # Create your views here.
 
 
@@ -51,7 +52,6 @@ class TaskViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         
-        
         for task in queryset:
             self.update_outdated_status(task)
             
@@ -79,20 +79,22 @@ class TaskViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         qs = super().get_queryset()
-        workspace_id = self.request.get('workspace_id')
+        # workspace_id = self.request.data.get('workspace')
 
-        if workspace_id:
-            qs = qs.filter(workspace_id=workspace_id)
+        # if workspace_id:
+        #     qs = qs.filter(workspace_id=workspace_id)
 
-        if 'HTTP_AUTHORIZATION' in self.request.META:
-            if not self.request.user.is_staff:
-                qs = qs.filter(
-                    workspace=self.request.user.workspace,
-                    # owner=self.request.user
-                )
+        # if 'HTTP_AUTHORIZATION' in self.request.META:
+        #     if not self.request.user.is_staff:
+        #         qs = qs.filter(
+        #             workspace=self.request.user,
+        #             # owner=self.request.user
+        #         )
                 # qs = qs.filter(owner = self.request.user.workspace)
                 # 
                 # qs = qs.filter(user = self.request.user)
+        workspace_id = Users_Workspaces.objects.filter(user = self.request.user).values_list('workspace', flat=True).first()
+        qs = qs.filter(workspace = workspace_id)
         return qs
     
     @action(detail = True , methods = ['patch'] , serializer_class = ChangeImageSerializer )
@@ -129,12 +131,33 @@ class CategoryOptionsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if 'HTTP_AUTHORIZATION' in self.request.META:
-            if not self.request.user.is_staff:
-                # Filter by workspace - adjust field names based on your actual model
-                user_workspace = self.request.user.workspace
-                qs = qs.filter(workspace=user_workspace)
+        # if 'HTTP_AUTHORIZATION' in self.request.META:
+        #     if not self.request.user.is_staff:
+        #         # Filter by workspace - adjust field names based on your actual model
+        #         user_workspace = self.request.user.workspace
+        #         qs = qs.filter(workspace=user_workspace)
+        workspace_id = Users_Workspaces.objects.filter(user = self.request.user).first()
+        category_option_id = workspace_category_option.objects.filter(workspace = workspace_id.workspace).values_list('category_option', flat=True)
+        qs = qs.filter(id__in = category_option_id)
         return qs
+    
+    def destroy(self, request, *args, **kwargs ):
+        workspace_id = request.data.get('workspace')
+        task_category_id = request.data.get('task_category')
+        category_option_id = request.data.get('category_option')
+        if not workspace_id or not task_category_id or not category_option_id:
+            return Response(
+                {"error": "Both workspace_id and task_category_id are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        connections = workspace_category_option.objects.filter(
+            workspace = workspace_id,
+            task_category = task_category_id,
+            category_option = category_option_id
+        )
+        connections.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     # def get_serializer_class(self):
     #     # can also check if POST: if self.request.method == 'POST
@@ -198,11 +221,14 @@ class TaskCategoryViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         qs = super().get_queryset()
-        if 'HTTP_AUTHORIZATION' in self.request.META:
-            if not self.request.user.is_staff:
-                # Filter by workspace - adjust field names based on your actual model
-                user_workspace = self.request.user.workspace
-                qs = qs.filter(workspace=user_workspace)
+        # if 'HTTP_AUTHORIZATION' in self.request.META:
+        #     if not self.request.user.is_staff:
+        #         # Filter by workspace - adjust field names based on your actual model
+        #         user_workspace = self.request.user.workspace
+        #         qs = qs.filter(workspace=user_workspace)
+        workspace_id = Users_Workspaces.objects.filter(user = self.request.user).first()
+        task_category_id = workspace_category_option.objects.filter(workspace = workspace_id.workspace).values_list('task_category', flat=True)
+        qs = qs.filter(id__in = task_category_id)
         return qs
 
     @action(detail=False, methods=['post'], url_path='assign-to-workspace')
@@ -246,9 +272,26 @@ class TaskCategoryViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         
         # Get the category instance from validated data
-        category = serializer.validated_data['category']
+        task_category = serializer.validated_data['task_category']
         
         # Perform the update
-        updated_category = serializer.update(category, serializer.validated_data)
+        updated_category = serializer.update(task_category, serializer.validated_data)
         
         return Response(serializer.to_representation(updated_category))
+    
+
+    def destroy(self, request, *args, **kwargs ):
+        workspace_id = request.data.get('workspace')
+        task_category_id = request.data.get('task_category')
+        if not workspace_id or not task_category_id:
+            return Response(
+                {"error": "Both workspace_id and task_category_id are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        connections = workspace_category_option.objects.filter(
+            workspace = workspace_id,
+            task_category = task_category_id
+        )
+        connections.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
