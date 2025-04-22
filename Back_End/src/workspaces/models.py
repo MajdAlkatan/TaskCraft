@@ -66,7 +66,7 @@ class Users_Workspaces(models.Model):
 
 def default_invite_expire_date():
     from datetime import datetime
-    return timezone.make_aware(datetime.today()) + timezone.timedelta(days=7)
+    return timezone.localdate() + timezone.timedelta(days=7)
 class Invite(TimeStampedModel):
     class Meta:
         db_table = 'invites'
@@ -106,7 +106,7 @@ class Invite(TimeStampedModel):
                 receiver=self.receiver,
                 workspace=self.workspace,
                 status='pending'
-            ).exists:
+            ).exists():
                 print(f'\n\nTHIS INVITE ALREADY EXISTS!\n\n')
                 raise Exception("THIS INVITE ALREADY EXISTS!")
 
