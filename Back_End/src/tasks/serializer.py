@@ -184,9 +184,24 @@ class TaskCreateSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             task = Task.objects.create(**validated_data)
 
+            # new line code to verification
+
+            for data in task_data:
+                if not workspace_category_option.objects.filter(
+                    workspace = validated_data['workspace'],
+                    task_category = data['task_category'],
+                    category_option = data['category_option']
+                ).exists():
+                    raise serializers.ValidationError(
+                    "This option is not assigned to the specified workspace and category"
+                    )
+                
+            #############
+
             for data in task_data:
                 tasks_task_categories.objects.create(task = task , **data)
-            
+
+                    
             for user in task_user:
                 users_tasks.objects.create(task = task , **user)
 
@@ -211,6 +226,20 @@ class TaskCreateSerializer(serializers.ModelSerializer):
 
         if task_data is not None:
             instance.items.all().delete()
+
+
+
+            for data in task_data:
+                if not workspace_category_option.objects.filter(
+                        workspace = validated_data['workspace'],
+                        task_category = data['task_category'],
+                        category_option = data['category_option']
+                    ).exists():
+                        raise serializers.ValidationError(
+                        "This option is not assigned to the specified workspace and category"
+                        )
+                
+            ###############################
 
             for data in task_data:
                 tasks_task_categories.objects.create(task = instance , **data)
@@ -282,13 +311,13 @@ class WorkspaceCategoryAssignmentSerializer(serializers.Serializer):
 
 
 class WorkspaceCategoryOptionAssignmentSerializer(serializers.Serializer):
-    workspace_id = serializers.PrimaryKeyRelatedField(
+    workspace = serializers.PrimaryKeyRelatedField(
         queryset=Workspace.objects.all(),
-        source='workspace'
+        # source='workspace'
     )
-    task_category_id = serializers.PrimaryKeyRelatedField(
+    task_category = serializers.PrimaryKeyRelatedField(
         queryset=Task_Category.objects.all(),
-        source='task_category'
+        # source='task_category'
     )
     options = CategoryOptionSerializer(many=True)
 
@@ -309,28 +338,15 @@ class WorkspaceCategoryOptionAssignmentSerializer(serializers.Serializer):
         task_category = validated_data['task_category']
         options_data = validated_data['options']
         
+        
+
         created_options = []
 
-        # assignment, created = workspace_category_option.objects.get_or_create(
+        # workspace_category_option.objects.get_or_create(
         #     workspace=workspace,
         #     task_category=task_category,
-        #     defaults={'category_option': None}
+        #     category_option=None
         # )
-        
-        # for option_data in options_data:
-            
-        #     option = Category_Option.objects.create(**option_data)
-            
-
-        #     workspace_category_option.objects.update_or_create(
-        #         workspace=workspace,
-        #         task_category=task_category,
-        #         category_option=None,
-        #         defaults={'category_option': option}
-        #     )
-            
-        #     created_options.append(option)
-        
 
         for option_data in options_data:
         
@@ -339,16 +355,18 @@ class WorkspaceCategoryOptionAssignmentSerializer(serializers.Serializer):
             
             option, created = Category_Option.objects.get_or_create(
                 name__iexact=option_name,
-                task_category=task_category,
-                defaults=option_data
+                # task_category=task_category,
+                defaults={'name':option_name}
             )
             
+            # print(option_name)
+
             
-            workspace_category_option.objects.update_or_create(
+            workspace_category_option.objects.get_or_create(
                 workspace=workspace,
                 task_category=task_category,
                 category_option=option,
-                defaults={}  
+                # defaults={}  
             )
             
             created_options.append(option)
@@ -369,17 +387,17 @@ class WorkspaceCategoryOptionAssignmentSerializer(serializers.Serializer):
         }
     
 class UpdateCategoryOptionSerializer(serializers.Serializer):
-        workspace_id = serializers.PrimaryKeyRelatedField(
+        workspace = serializers.PrimaryKeyRelatedField(
             queryset=Workspace.objects.all(),
-            source='workspace'
+            # source='workspace'
         )
-        task_category_id = serializers.PrimaryKeyRelatedField(
+        task_category = serializers.PrimaryKeyRelatedField(
             queryset=Task_Category.objects.all(),
-            source='task_category'
+            # source='task_category'
         )
-        option_id = serializers.PrimaryKeyRelatedField(
+        option = serializers.PrimaryKeyRelatedField(
             queryset=Category_Option.objects.all(),
-            source='option'
+            # source='option'
         )
         name = serializers.CharField(max_length=20)
 
@@ -404,20 +422,23 @@ class UpdateCategoryOptionSerializer(serializers.Serializer):
 
             existing_option = Category_Option.objects.filter(name__iexact=validated_data['name']).first()
             if existing_option and existing_option.id !=instance.id:
-                connections = workspace_category_option.objects.filter(workspace = instance.workspace , task_category=instance.task_category , option = instance.option)
-                for connection in connections:
-                    connection.update(task_category = existing_option)
+                connections = workspace_category_option.objects.filter(workspace =  validated_data['workspace'] , task_category= validated_data['task_category'] , category_option = instance)
+                connections.update(category_option = existing_option)
+                # for connection in connections:
+                #     connection.update(task_category = existing_option)
                 return existing_option
             else:
-                options = Category_Option.objects.create(**validated_data)
-                for option in options:
+                option_all = Category_Option.objects.create(name = validated_data['name'])
+                
+                # for option_one in option_all:
 
-                    workspace_category_option.objects.update(
+                workspace_category_option.objects.update(
                         workspace=instance.workspace,
                         task_category=instance.category,
-                        category_Option = option
+                        # category_Option = option_one
+                        category_option = option_all
                     )
-            return options
+            # return option_all
 
             # instance.name = validated_data.get('name', instance.name)
             # instance.save()
@@ -433,21 +454,21 @@ class UpdateCategoryOptionSerializer(serializers.Serializer):
 
 
 class UpdateTaskCategorySerializer(serializers.Serializer):
-    workspace_id = serializers.PrimaryKeyRelatedField(
+    workspace = serializers.PrimaryKeyRelatedField(
         queryset=Workspace.objects.all(),
-        source='workspace'
+        # source='workspace'
     )
-    category_id = serializers.PrimaryKeyRelatedField(
+    task_category = serializers.PrimaryKeyRelatedField(
         queryset=Task_Category.objects.all(),
-        source='category'
+        # source='category'
     )
     name = serializers.CharField(max_length=20, required=True)
 
     def validate(self, data):
         if not workspace_category_option.objects.filter(
             workspace=data['workspace'],
-            task_category=data['category'],
-            category_option=None  
+            task_category=data['task_category'],
+            # category_option=None  
         ).exists():
             raise serializers.ValidationError(
                 "This category is not assigned to the specified workspace"
@@ -463,19 +484,24 @@ class UpdateTaskCategorySerializer(serializers.Serializer):
         
         existing_category = Task_Category.objects.filter(name__iexact=validated_data['name']).first()
         if existing_category and existing_category.id !=instance.id:
-        
-            connections = workspace_category_option.objects.filter(workspace = instance.workspace , task_category=instance.task_category)
-            for connection in connections:
-                connection.update(task_category = existing_category)
+            
+            connections = workspace_category_option.objects.filter(workspace = validated_data['workspace'] , task_category=instance)
+            connections.update(task_category = existing_category)
+            # for connection in connections:
+            #     connection.update(task_category = existing_category)
             return existing_category
         else:
-            categories = Task_Category.objects.create(**validated_data)
-            for category in categories:
-                workspace_category_option.objects.update(
+            categories = Task_Category.objects.create(name = validated_data['name'])
+            # for category in categories:
+            workspace_category_option.objects.update(
                     workspace=instance.workspace,
-                    task_category=category
-                )
-            return category
+                    # task_category=category
+                    task_category = categories
+            )
+        
+            return categories
+            
+            # return category
 
         # instance.name = validated_data.get('name', instance.name)
         # instance.save()
