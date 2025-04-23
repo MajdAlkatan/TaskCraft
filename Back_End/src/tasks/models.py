@@ -73,7 +73,7 @@ class Task_Category(TimeStampedModel):
     class Meta:
         app_label = 'tasks'
         db_table = 'task_categories'
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20 , unique=True)
     tasks = models.ManyToManyField(
         Task,
         through="tasks_task_categories" ,
@@ -96,19 +96,19 @@ class Category_Option(TimeStampedModel):
     class Meta:
         app_label = 'tasks'
         db_table = 'category_options'
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20 , unique=True)
     # task_category  = models.ForeignKey(Task_Category , on_delete=models.CASCADE , related_name='options')
     tasks = models.ManyToManyField(
         Task,
         through="tasks_task_categories" ,
         through_fields=("category_option_id" , "task_id"),
-        related_name="category_cptions"
+        related_name="category_options"
     )
     task_categories = models.ManyToManyField(
         Task_Category,
         through="workspace_category_option" ,
         through_fields=("category_option_id" , "task_category_id"),
-        related_name="category_cptions"
+        related_name="category_options"
     )
     
     def save(self , *args , **kwargs):
@@ -134,7 +134,7 @@ class workspace_category_option(models.Model):
         db_table = "workspace_category_option"
         unique_together = [
             # ('workspace', 'task_category'),  # Workspace-Category relationship
-            # ('workspace', 'task_category', 'category_option')  # Workspace-Category-Option relationship
+            ('workspace', 'task_category', 'category_option')  # Workspace-Category-Option relationship
         ]
     workspace = models.ForeignKey(Workspace , on_delete = models.CASCADE)
     task_category = models.ForeignKey(Task_Category , on_delete = models.CASCADE , related_name = 'options')
