@@ -9,6 +9,7 @@ from .models import Task , Category_Option , Task_Category , workspace_category_
 from .serializer import TaskSerializer , TaskCreateSerializer , CategoryOptionSerializer  ,TaskCategorySerializer , ChangeImageSerializer , WorkspaceCategoryAssignmentSerializer , WorkspaceCategoryOptionAssignmentSerializer , UpdateCategoryOptionSerializer , UpdateTaskCategorySerializer
 from .filter import TaskFilter
 from workspaces.models import Users_Workspaces
+from workspaces.permissions import IsOwner , IsMember , CanEdit
 # Create your views here.
 
 
@@ -65,12 +66,16 @@ class TaskViewSet(viewsets.ModelViewSet):
     
     
 
-    # def get_permissions(self):
-    #     self.permission_classes = [AllowAny]
-    #     if 'HTTP_AUTHORIZATION' in self.request.META:
-    #         if not self.request.user.is_staff:
-    #             self.permission_classes = [IsAuthenticated]
-    #     return super().get_permissions()
+    def get_permissions(self):
+        self.permission_classes = [AllowAny]
+        if self.action == 'create' or self.action == 'update' or self.action == 'destroy':
+            self.permission_classes.append(IsAuthenticated , CanEdit)
+        elif self.action == 'list' or self.action == 'retrieve':
+            self.permission_classes.append(IsAuthenticated , IsMember)
+
+        
+
+        return super().get_permissions()
 
     def get_serializer_class(self):
         if self.action == 'create' or self.action == 'update' or self.action == 'partial_update':
@@ -79,6 +84,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         qs = super().get_queryset()
+
         # workspace_id = self.request.data.get('workspace')
 
         # if workspace_id:
@@ -93,8 +99,9 @@ class TaskViewSet(viewsets.ModelViewSet):
                 # qs = qs.filter(owner = self.request.user.workspace)
                 # 
                 # qs = qs.filter(user = self.request.user)
-        workspace_id = Users_Workspaces.objects.filter(user = self.request.user).values_list('workspace', flat=True).first()
-        qs = qs.filter(workspace = workspace_id)
+        # self.
+        # workspace_id = Users_Workspaces.objects.filter(user = self.request.user).values_list('workspace', flat=True).first()
+        # qs = qs.filter(workspace = workspace_id)
         return qs
     
     @action(detail = True , methods = ['patch'] , serializer_class = ChangeImageSerializer )
@@ -241,6 +248,8 @@ class TaskCategoryViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='add-options')
     def add_options(self, request):
+        print(f"\n\n\n{request.data}\n\n\n")
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         result = serializer.save()
