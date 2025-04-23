@@ -263,9 +263,9 @@ class ChangeImageSerializer(serializers.ModelSerializer):
 
 
 class WorkspaceCategoryAssignmentSerializer(serializers.Serializer):
-    workspace_id = serializers.PrimaryKeyRelatedField(
+    workspace = serializers.PrimaryKeyRelatedField(
         queryset=Workspace.objects.all(),
-        source='workspace'
+        # source='workspace'
     )
     name = serializers.CharField(max_length=20)
 
@@ -361,7 +361,16 @@ class WorkspaceCategoryOptionAssignmentSerializer(serializers.Serializer):
             
             # print(option_name)
 
-            
+            # if workspace_category_option.objects.filter(
+            #         workspace=workspace,
+            #         task_category=task_category,
+            #         category_option=option,
+            #         # defaults={}  
+            #     ).exists():
+            #     raise("this options is already existing in this workspace and category")
+                
+
+
             workspace_category_option.objects.get_or_create(
                 workspace=workspace,
                 task_category=task_category,
