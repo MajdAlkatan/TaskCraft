@@ -1,9 +1,11 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from .models import Workspace , Users_Workspaces , Invite , Workspace_Invitation
 
 # from src.Users.serializer import UserSerializer
 from users.models import User
+from tasks.serializer import WorkspaceCategoryAssignmentSerializer , WorkspaceCategoryOptionAssignmentSerializer
 # from users.serializers import UserSerializer
 
 class LocalUserSerializer(serializers.ModelSerializer):
@@ -101,18 +103,76 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         if len(user_workspaces) > 9: # there is 10 or more workspaces that this user owns
             raise serializers.ValidationError(f'User {self.context['request'].user.id} has reached the allowed limit of workspaces count !')
         
-        image = validated_data.pop('image')
-        instance = super().create(validated_data)
-        
-        instance.image = image
-        instance.save()
-        
-        Users_Workspaces.objects.create(
-            workspace=instance,
-            user=self.context['request'].user,
-            user_role = 'owner'
-        )
-        #TODO: implement soft create for the main task_categories
+        with transaction.atomic():
+            if 'image' in validated_data:
+                image = validated_data.pop('image')
+            instance = super().create(validated_data)
+            
+            if 'image' in validated_data:
+                instance.image = image
+                instance.save()
+            
+            Users_Workspaces.objects.create(
+                workspace=instance,
+                user=self.context['request'].user,
+                user_role = 'owner'
+            )
+            
+            #TODO: implement soft create for the main task_categories
+            status_category_serializer = WorkspaceCategoryAssignmentSerializer(
+                data={
+                    "workspace":instance.id,
+                    "name": "status"
+                }
+            )
+            if status_category_serializer.is_valid():
+                status_category = status_category_serializer.save()
+            else:
+                raise serializers.ValidationError({"status_category": "can't create category [credentials not valid] [in serializer]"})
+            priority_category_serializer = WorkspaceCategoryAssignmentSerializer(
+                data={
+                    "workspace":instance.id,
+                    "name": "priority"
+                }
+            )
+            if priority_category_serializer.is_valid():
+                priority_category = priority_category_serializer.save()
+            else:
+                raise serializers.ValidationError({"priority_category": "can't create category [credentials not valid] [in serializer]"})
+            
+            status_options_serializer = WorkspaceCategoryOptionAssignmentSerializer(
+                data={
+                    "workspace":instance.id,
+                    "task_category":status_category.id,
+                    "options":[
+                        {"name":"pending"},
+                        {"name":"in progress"},
+                        {"name":"completed"}
+                    ]
+                }
+            )
+            if status_options_serializer.is_valid():
+                status_options_serializer.save()
+            else:
+                raise serializers.ValidationError({"status_options": f"can't create status options [credentials not valid] [in serializer] [{status_options_serializer.errors}]"})
+
+            priority_options_serializer = WorkspaceCategoryOptionAssignmentSerializer(
+                data={
+                    "workspace":instance.id,
+                    "task_category":priority_category.id,
+                    "options":[
+                        {"name":"low"},
+                        {"name":"medium"},
+                        {"name":"high"}
+                    ]
+                }
+            )
+            if priority_options_serializer.is_valid():
+                priority_options_serializer.save()
+            else:
+                raise serializers.ValidationError({"priority_options": "can't create priority options [credentials not valid] [in serializer]"})
+
+
         return instance
 
     def update(self, instance, validated_data):
