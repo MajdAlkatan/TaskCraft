@@ -13,7 +13,6 @@ from rest_framework import viewsets , status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
 from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 
@@ -24,6 +23,7 @@ from .models import Workspace , Users_Workspaces , Invite , Workspace_Invitation
 from .serializers import WorkspaceSerializer , InviteSerializer , MembershipSerializer , WorkspaceInvitationSerializer
 from .filters import WorkspaceFilter
 from .utils.crypto import Crypto
+from tools.tools import CustomPageNumberPaginator
 
 # Create your views here.
 
@@ -32,10 +32,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     serializer_class = WorkspaceSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
     # Pagination
-    pagination_class = PageNumberPagination
-    pagination_class.page_size=50
-    pagination_class.max_page_size=120
-    pagination_class.page_size_query_param='size'
+    pagination_class = CustomPageNumberPaginator
     # filtering/searching/ordering
     filter_backends = [
         DjangoFilterBackend,
@@ -87,6 +84,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     # Read
     def list(self, request, *args, **kwargs):
         try:
+            import pdb; pdb.set_trace()
             return super().list(request, *args, **kwargs)
         except Exception as e:
             return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)

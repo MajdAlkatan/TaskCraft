@@ -22,6 +22,7 @@ from .serializers import (
     ChangeImageSerializer,
 )
 from .filters import UserFilter
+from tools.tools import CustomPageNumberPaginator
 # from .permissions import IsClient
 
 # import pdb;
@@ -36,10 +37,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
     # Pagination
-    pagination_class = PageNumberPagination
-    pagination_class.page_size=50
-    pagination_class.max_page_size=120
-    pagination_class.page_size_query_param='size'
+    pagination_class = CustomPageNumberPaginator
     # filtering/searching/ordering
     filter_backends = [
         DjangoFilterBackend,
