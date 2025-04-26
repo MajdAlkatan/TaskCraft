@@ -13,7 +13,6 @@ from rest_framework import viewsets , status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
 from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 
@@ -24,6 +23,7 @@ from .models import Workspace , Users_Workspaces , Invite , Workspace_Invitation
 from .serializers import WorkspaceSerializer , InviteSerializer , MembershipSerializer , WorkspaceInvitationSerializer
 from .filters import WorkspaceFilter
 from .utils.crypto import Crypto
+from tools.tools import CustomPageNumberPaginator
 
 # Create your views here.
 
@@ -32,10 +32,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     serializer_class = WorkspaceSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
     # Pagination
-    pagination_class = PageNumberPagination
-    pagination_class.page_size=50
-    pagination_class.max_page_size=120
-    pagination_class.page_size_query_param='size'
+    pagination_class = CustomPageNumberPaginator
     # filtering/searching/ordering
     filter_backends = [
         DjangoFilterBackend,
@@ -48,8 +45,11 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         self.permission_classes = [AllowAny]
-        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy' or self.action == 'owned':
+        if self.action == 'create' or self.action == 'owned':
             self.permission_classes.append(IsAuthenticated)
+        if self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy':
+            self.permission_classes.append(IsAuthenticated)
+            self.permission_classes.append(IsOwner)
         if self.action == 'list':
             if 'HTTP_AUTHORIZATION' in self.request.META: # if there is an authentication header
                 if not self.request.user.is_staff:
@@ -84,14 +84,15 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     # Read
     def list(self, request, *args, **kwargs):
         try:
+            import pdb; pdb.set_trace()
             return super().list(request, *args, **kwargs)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     def retrieve(self, request, *args, **kwargs):
         try:
             return super().retrieve(request, *args, **kwargs)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     
     # Create
     def perform_create(self, serializer):
@@ -100,14 +101,14 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         try:
             return super().create(request, *args, **kwargs)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     
     # Update
     def update(self, request, *args, **kwargs):
         try:
             return super().update(request, *args, **kwargs)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     def partial_update(self, request, *args, **kwargs):
         """
         request:
@@ -119,14 +120,14 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         try:
             return super().partial_update(request, *args, **kwargs)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     
     # Delete
     def destroy(self, request, *args, **kwargs):
         try:
             return super().destroy(request, *args, **kwargs)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
 
     # Get-User-Workspaces
     @action(detail=False , methods=['get'])
@@ -149,7 +150,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_200_OK
             )
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     
     @action(detail=True , methods=['get'])
     def members(self , request , pk=None):
@@ -164,7 +165,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             )
             return Response(serializer.data.get('members') , status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     
     @action(detail=True , methods=['get'])
     def owner(self , request , pk=None):
@@ -173,7 +174,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(instance=workspace)
             return Response(serializer.data.get('owner') , status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     
     @action(detail=True , methods=['delete'])
     def leave(self , request , pk):
@@ -189,7 +190,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             #TODO: Must delete all tasks he created or he was contributing in. @Ali_Almusfi
             return Response(None , status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
 
 
     # Invites
@@ -219,7 +220,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             
             return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
 
     @action(detail=True , methods=['delete'])
     def kick_user(self, request , pk):
@@ -235,7 +236,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             #TODO: Must delete all tasks he created or he was contributing in. @Ali_Almusfi
             return Response(None , status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     
     # User_Role
     @action(detail=True , methods=['patch'] , serializer_class=MembershipSerializer)
@@ -273,7 +274,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             )
             return Response(serializer.data , status.HTTP_202_ACCEPTED)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
         
         """
         serializer = self.get_serializer(
@@ -324,7 +325,7 @@ def is_invitation_valid(expires_at , token):
             print(f'\n\n\nBadSignature\n\n\n')
             return False
     except Exception as e:
-        return Response({"error:": e} , status.HTTP_409_CONFLICT)
+        return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
 
 
 class CreateWorkspaceInvitationLink(APIView):
@@ -353,7 +354,7 @@ class CreateWorkspaceInvitationLink(APIView):
 
             return Response({"link":invitation.link} , status.HTTP_201_CREATED)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
     
 class GetWorkspaceInvitationLink(APIView):
     permission_classes = [IsAuthenticated , IsMember]
@@ -380,7 +381,7 @@ class GetWorkspaceInvitationLink(APIView):
             
             return Response({"link": invitation.link} , status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
         
 
 class JoinWorkspaceViaInvitationLink(APIView):
@@ -422,7 +423,7 @@ class JoinWorkspaceViaInvitationLink(APIView):
             )
             return Response(serializer.data , status.HTTP_201_CREATED)
         except Exception as e:
-            return Response({"error:": e} , status.HTTP_409_CONFLICT)
+            return Response({"error:": str(e)} , status.HTTP_409_CONFLICT)
 
         
 

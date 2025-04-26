@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from datetime import datetime
+from dateutil.parser import parse
 from rest_framework import viewsets , status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -21,6 +22,7 @@ from .serializers import (
     ChangeImageSerializer,
 )
 from .filters import UserFilter
+from tools.tools import CustomPageNumberPaginator
 # from .permissions import IsClient
 
 # import pdb;
@@ -35,10 +37,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
     # Pagination
-    pagination_class = PageNumberPagination
-    pagination_class.page_size=50
-    pagination_class.max_page_size=120
-    pagination_class.page_size_query_param='size'
+    pagination_class = CustomPageNumberPaginator
     # filtering/searching/ordering
     filter_backends = [
         DjangoFilterBackend,
@@ -140,8 +139,8 @@ class UserViewSet(viewsets.ModelViewSet):
         # filtering the data to exclude the expired invites and delete them
         filtered_data = []
         for invite_item in serializer.data:
-            if not invite_item.expire_date < datetime.today():
-                invite = Invite.objects.get(invite_item.id)
+            if (parse(invite_item["expire_date"]) < datetime.today()):
+                invite = Invite.objects.get(id=invite_item['id'])
                 invite.delete()
             else:
                 filtered_data.append(invite_item)
@@ -170,8 +169,8 @@ class UserViewSet(viewsets.ModelViewSet):
         # filtering the data to exclude the expired invites and delete them
         filtered_data = []
         for invite_item in serializer.data:
-            if not invite_item.expire_date < datetime.today():
-                invite = Invite.objects.get(invite_item.id)
+            if (parse(invite_item["expire_date"]) < datetime.today()):
+                invite = Invite.objects.get(id=invite_item['id'])
                 invite.delete()
             else:
                 filtered_data.append(invite_item)

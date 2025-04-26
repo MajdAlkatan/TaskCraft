@@ -35,6 +35,15 @@ class Workspace(TimeStampedModel):
     )
     code = models.UUIDField(default=uuid.uuid4 , unique=True , editable=False)
 
+    def delete(self, *args , **kwargs):
+        try:
+            workspaces = Workspace.objects.filter(owner_id=self.owner_id)
+            if len(workspaces) < 2:
+                raise Exception('user must have at least one workspace, user is trying to delete the last workspace he owns!')
+            return super().delete(*args , **kwargs)
+        except Exception as e:
+            raise e
+
     def __str__(self):
         return self.name
 

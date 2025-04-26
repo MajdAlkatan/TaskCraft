@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.pagination import PageNumberPagination
 
 #auto insert the created_at & updated_at fields
 class TimeStampedModel(models.Model):
@@ -7,3 +8,7 @@ class TimeStampedModel(models.Model):
     class Meta:
         abstract = True
     
+class CustomPageNumberPaginator(PageNumberPagination):
+    page_size = 50
+    max_page_size = 120
+    page_size_query_param = 'size'
