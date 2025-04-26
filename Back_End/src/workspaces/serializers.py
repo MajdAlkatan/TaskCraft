@@ -119,6 +119,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             )
             
             #TODO: implement soft create for the main task_categories
+            """
             # categories
             status_category_serializer = WorkspaceCategoryAssignmentSerializer(
                 data={
@@ -171,7 +172,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             if not priority_options_serializer.is_valid():
                 raise serializers.ValidationError({"priority_options": "can't create priority options [credentials not valid] [in serializer]"})
             priority_options_serializer.save()
-
+            """
 
         return instance
 
