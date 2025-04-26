@@ -119,27 +119,28 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             )
             
             #TODO: implement soft create for the main task_categories
+            # categories
             status_category_serializer = WorkspaceCategoryAssignmentSerializer(
                 data={
                     "workspace":instance.id,
                     "name": "status"
                 }
             )
-            if status_category_serializer.is_valid():
-                status_category = status_category_serializer.save()
-            else:
+            if not status_category_serializer.is_valid():
                 raise serializers.ValidationError({"status_category": "can't create category [credentials not valid] [in serializer]"})
+            status_category = status_category_serializer.save()
+
             priority_category_serializer = WorkspaceCategoryAssignmentSerializer(
                 data={
                     "workspace":instance.id,
                     "name": "priority"
                 }
             )
-            if priority_category_serializer.is_valid():
-                priority_category = priority_category_serializer.save()
-            else:
+            if not priority_category_serializer.is_valid():
                 raise serializers.ValidationError({"priority_category": "can't create category [credentials not valid] [in serializer]"})
+            priority_category = priority_category_serializer.save()
             
+            # options
             status_options_serializer = WorkspaceCategoryOptionAssignmentSerializer(
                 data={
                     "workspace":instance.id,
@@ -151,10 +152,10 @@ class WorkspaceSerializer(serializers.ModelSerializer):
                     ]
                 }
             )
-            if status_options_serializer.is_valid():
-                status_options_serializer.save()
-            else:
+            if not status_options_serializer.is_valid():
                 raise serializers.ValidationError({"status_options": f"can't create status options [credentials not valid] [in serializer] [{status_options_serializer.errors}]"})
+            status_options_serializer.save()
+            
 
             priority_options_serializer = WorkspaceCategoryOptionAssignmentSerializer(
                 data={
@@ -167,10 +168,9 @@ class WorkspaceSerializer(serializers.ModelSerializer):
                     ]
                 }
             )
-            if priority_options_serializer.is_valid():
-                priority_options_serializer.save()
-            else:
+            if not priority_options_serializer.is_valid():
                 raise serializers.ValidationError({"priority_options": "can't create priority options [credentials not valid] [in serializer]"})
+            priority_options_serializer.save()
 
 
         return instance

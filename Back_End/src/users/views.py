@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from datetime import datetime
+from dateutil.parser import parse
 from rest_framework import viewsets , status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -140,8 +141,8 @@ class UserViewSet(viewsets.ModelViewSet):
         # filtering the data to exclude the expired invites and delete them
         filtered_data = []
         for invite_item in serializer.data:
-            if not invite_item.expire_date < datetime.today():
-                invite = Invite.objects.get(invite_item.id)
+            if (parse(invite_item["expire_date"]) < datetime.today()):
+                invite = Invite.objects.get(id=invite_item['id'])
                 invite.delete()
             else:
                 filtered_data.append(invite_item)
@@ -170,8 +171,8 @@ class UserViewSet(viewsets.ModelViewSet):
         # filtering the data to exclude the expired invites and delete them
         filtered_data = []
         for invite_item in serializer.data:
-            if not invite_item.expire_date < datetime.today():
-                invite = Invite.objects.get(invite_item.id)
+            if (parse(invite_item["expire_date"]) < datetime.today()):
+                invite = Invite.objects.get(id=invite_item['id'])
                 invite.delete()
             else:
                 filtered_data.append(invite_item)
